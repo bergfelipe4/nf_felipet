@@ -1,0 +1,731 @@
+
+<%= form_with model: @nota_fiscal, url: notas_fiscais_path, local: true do |f| %>
+  <div class="card shadow-sm border-0 mb-4">
+    <div class="card-body">
+      <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+        <div>
+          <h3 class="h3 mb-1">Emissão de NF-e</h3>
+          <p class="text-muted mb-0">Os identificadores fiscais são preenchidos automaticamente para evitar rejeição na SEFAZ.</p>
+        </div>
+        <div class="text-md-end">
+          <span class="badge text-bg-primary-subtle text-primary-emphasis">Controle automático</span>
+        </div>
+      </div>
+
+      <div class="alert alert-info bg-info-subtle border-0 text-dark small">
+        Ambiente de HOMOLOGACAO
+      </div>
+
+      <%= hidden_field_tag "nota[ide][tpAmb]", params.dig(:nota, :ide, :tpAmb), id: "nota_ide_tpAmb" %>
+      <%= hidden_field_tag "nota[ide][cGta]", params.dig(:nota, :ide, :cGta), id: "nota_ide_cGta" %>
+      <%= hidden_field_tag "nota[ide][hashCSSI]", params.dig(:nota, :ide, :hashCSSI), id: "nota_ide_hashCSSI" %>
+      <%= hidden_field_tag "nota[ide][CPFUsuario]", params.dig(:nota, :ide, :CPFUsuario), id: "nota_ide_CPFUsuario" %>
+    </div>
+  </div>
+
+  <ul class="nav nav-pills nav-fill step-tabs" id="notaFiscalTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="tab-emit-tab" data-bs-toggle="tab" data-bs-target="#tab-emit" type="button" role="tab">
+        <span class="step-index">1</span>
+        <span class="step-text">
+          <strong>Emitente</strong>
+          <small>Cadastro e endereço</small>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab-dest-tab" data-bs-toggle="tab" data-bs-target="#tab-dest" type="button" role="tab">
+        <span class="step-index">2</span>
+        <span class="step-text">
+          <strong>Destinatário</strong>
+          <small>Documentos e contato</small>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab-prods-tab" data-bs-toggle="tab" data-bs-target="#tab-prods" type="button" role="tab">
+        <span class="step-index">3</span>
+        <span class="step-text">
+          <strong>Produtos</strong>
+          <small>Itens e tributos</small>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab-transp-tab" data-bs-toggle="tab" data-bs-target="#tab-transp" type="button" role="tab">
+        <span class="step-index">4</span>
+        <span class="step-text">
+          <strong>Transporte</strong>
+          <small>Frete e volumes</small>
+        </span>
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="tab-pag-tab" data-bs-toggle="tab" data-bs-target="#tab-pag" type="button" role="tab">
+        <span class="step-index">5</span>
+        <span class="step-text">
+          <strong>Pagamento</strong>
+          <small>Forma e condição</small>
+        </span>
+      </button>
+    </li>
+  </ul>
+
+  <div class="tab-content border border-top-0 p-4 bg-white rounded-bottom shadow-sm" id="notaFiscalTabsContent">
+
+    <div class="tab-pane fade show active" id="tab-emit" role="tabpanel" aria-labelledby="tab-emit-tab">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= label_tag "nota_emit_CPF", "CPF", class: "form-label" %>
+          <%= text_field_tag "nota[emit][CPF]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-5">
+          <%= label_tag "nota_emit_xNome", "Razão social (xNome)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][xNome]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-4">
+          <%= label_tag "nota_emit_xFant", "Nome fantasia (xFant)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][xFant]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-5">
+          <%= label_tag "nota_emit_xLgr", "Logradouro (xLgr)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][xLgr]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_emit_nro", "Número (nro)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][nro]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-5">
+          <%= label_tag "nota_emit_xCpl", "Complemento (xCpl)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][xCpl]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-4">
+          <%= label_tag "nota_emit_xBairro", "Bairro (xBairro)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][xBairro]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_emit_cMun", "Município (cMun)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][cMun]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_emit_CEP", "CEP", class: "form-label" %>
+          <%= text_field_tag "nota[emit][CEP]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_emit_fone", "Telefone", class: "form-label" %>
+          <%= text_field_tag "nota[emit][fone]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_emit_IE", "Inscrição estadual (IE)", class: "form-label" %>
+          <%= text_field_tag "nota[emit][IE]", nil, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-dest" role="tabpanel" aria-labelledby="tab-dest-tab">
+      <div class="row g-3">
+        <div class="col-md-4">
+          <%= label_tag "nota_dest_CNPJ", "CNPJ", class: "form-label" %>
+          <%= text_field_tag "nota[dest][CNPJ]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-8">
+          <%= label_tag "nota_dest_xNome", "Razão social (xNome)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][xNome]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-5">
+          <%= label_tag "nota_dest_xLgr", "Logradouro (xLgr)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][xLgr]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_dest_nro", "Número (nro)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][nro]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-5">
+          <%= label_tag "nota_dest_xCpl", "Complemento (xCpl)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][xCpl]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-4">
+          <%= label_tag "nota_dest_xBairro", "Bairro (xBairro)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][xBairro]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_dest_cMun", "Município (cMun)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][cMun]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_dest_CEP", "CEP", class: "form-label" %>
+          <%= text_field_tag "nota[dest][CEP]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_dest_fone", "Telefone", class: "form-label" %>
+          <%= text_field_tag "nota[dest][fone]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_dest_indIEDest", "indIEDest", class: "form-label" %>
+          <%= text_field_tag "nota[dest][indIEDest]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_dest_IE", "Inscrição estadual (IE)", class: "form-label" %>
+          <%= text_field_tag "nota[dest][IE]", nil, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-prods" role="tabpanel" aria-labelledby="tab-prods-tab">
+      <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-3">
+        <div>
+          <h5 class="mb-1">Itens da nota</h5>
+          <p class="text-muted mb-0 small">Os campos seguem o padrão nota[prods][index][campo]. Use duplicação para agilizar cadastros semelhantes.</p>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-2" id="adicionar-produto">
+          <i class="fa-solid fa-plus"></i>
+          Adicionar produto
+        </button>
+      </div>
+
+      <div id="produtos-container" class="mb-3"></div>
+
+      <template id="produto-template">
+        <div class="produto-item card mb-4 shadow-sm border-0">
+          <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary d-inline-flex align-items-center gap-2" onclick="duplicarProduto(this)">
+              <i class="fa-solid fa-clone"></i>
+              Duplicar
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-danger d-inline-flex align-items-center gap-2" onclick="removeProduto(this)">
+              <i class="fa-solid fa-trash-can"></i>
+              Remover
+            </button>
+          </div>
+          <div class="card-body">
+              <div class="d-flex flex-column flex-md-row justify-content-between gap-3 mb-3">
+                <div>
+                  <span class="badge bg-primary-subtle text-primary-emphasis text-uppercase small">Item <span class="produto-seq">1</span></span>
+                  <h5 class="mb-1 produto-title">Produto 1</h5>
+                  <p class="text-muted small mb-0">Preencha os dados comerciais e fiscais do item.</p>
+                </div>
+              </div>
+
+            <div class="row g-4">
+              <div class="col-lg-9">
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Código (cProd)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="cProd" />
+                  </div>
+                  <div class="col-sm-6 col-lg-6">
+                    <%= label_tag nil, "Descrição (xProd)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="xProd" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "NCM", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="NCM" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "CFOP", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="CFOP" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Un. comercial (uCom)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="uCom" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Qtd. comercial (qCom)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="qCom" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Valor unit. (vUnCom)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="vUnCom" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Un. tributável (uTrib)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="uTrib" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Qtd. trib. (qTrib)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="qTrib" />
+                  </div>
+                </div>
+
+                <hr class="text-muted my-4" />
+
+                <div class="row g-3">
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "CST", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="CST" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "Redução BC (pRedBC)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="pRedBC" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "ICMS (%) (pICMS)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="pICMS" />
+                  </div>
+                  <div class="col-sm-6 col-lg-3">
+                    <%= label_tag nil, "ICMS UF Dest (%) (pICMSUFDest)", class: "form-label" %>
+                    <input type="text" class="form-control" data-field="pICMSUFDest" />
+                  </div>
+                </div>
+              </div>
+              <div class="col-lg-3">
+                <div class="produto-preview h-100 p-3 bg-body-tertiary rounded-3">
+                  <p class="text-uppercase text-muted small mb-2">Resumo</p>
+                  <div class="produto-resumo-nome fw-semibold mb-2">Produto 1</div>
+                  <div class="produto-resumo-valores small text-muted">Informe quantidade e valor unitário</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </template>
+    </div>
+
+    <div class="tab-pane fade" id="tab-transp" role="tabpanel" aria-labelledby="tab-transp-tab">
+      <div class="row g-3 mb-4">
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_modFrete", "Modalidade frete (modFrete)", class: "form-label" %>
+          <%= text_field_tag "nota[transp][modFrete]", nil, class: "form-control" %>
+        </div>
+      </div>
+
+      <h5 class="mt-4">Transportadora</h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_transporta_CPF", "CPF", class: "form-label" %>
+          <%= text_field_tag "nota[transp][transporta][CPF]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_transporta_xNome", "Nome", class: "form-label" %>
+          <%= text_field_tag "nota[transp][transporta][xNome]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_transporta_IE", "IE", class: "form-label" %>
+          <%= text_field_tag "nota[transp][transporta][IE]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_transporta_xEnder", "Endereço", class: "form-label" %>
+          <%= text_field_tag "nota[transp][transporta][xEnder]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_transporta_xMun", "Município", class: "form-label" %>
+          <%= text_field_tag "nota[transp][transporta][xMun]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_transp_transporta_UF", "UF", class: "form-label" %>
+          <%= text_field_tag "nota[transp][transporta][UF]", nil, class: "form-control" %>
+        </div>
+      </div>
+
+      <h5 class="mt-4">Veículo</h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_veicTransp_placa", "Placa", class: "form-label" %>
+          <%= text_field_tag "nota[transp][veicTransp][placa]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-2">
+          <%= label_tag "nota_transp_veicTransp_UF", "UF", class: "form-label" %>
+          <%= text_field_tag "nota[transp][veicTransp][UF]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_veicTransp_RNTC", "RNTC", class: "form-label" %>
+          <%= text_field_tag "nota[transp][veicTransp][RNTC]", nil, class: "form-control" %>
+        </div>
+      </div>
+
+      <h5 class="mt-4">Volume</h5>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_vol_qVol", "Quantidade (qVol)", class: "form-label" %>
+          <%= text_field_tag "nota[transp][vol][qVol]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_vol_esp", "Espécie (esp)", class: "form-label" %>
+          <%= text_field_tag "nota[transp][vol][esp]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_vol_marca", "Marca", class: "form-label" %>
+          <%= text_field_tag "nota[transp][vol][marca]", nil, class: "form-control" %>
+        </div>
+        <div class="col-md-3">
+          <%= label_tag "nota_transp_vol_nVol", "Número do volume (nVol)", class: "form-label" %>
+          <%= text_field_tag "nota[transp][vol][nVol]", nil, class: "form-control" %>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-pane fade" id="tab-pag" role="tabpanel" aria-labelledby="tab-pag-tab">
+      <div class="row g-3">
+        <div class="col-md-3">
+          <%= label_tag "nota_pag_tPag", "Forma de pagamento (tPag)", class: "form-label" %>
+          <%= text_field_tag "nota[pag][tPag]", nil, class: "form-control" %>
+        </div>
+      </div>
+      <br>
+      <%= f.button :submit, class: "btn btn-outline-success d-inline-flex align-items-center gap-2" do %>
+      <i class="fa-solid fa-paper-plane"></i>
+      Emitir NFA-e
+    <% end %>
+    </div>
+  </div>
+  <hr>
+  <div class="card shadow-sm border-0 mt-4">
+    <div class="card-body">
+      <h5 class="mb-3">Informações complementares</h5>
+      <%= label_tag "nota_infAdic_infCpl", "Informações complementares (infCpl)", class: "form-label" %>
+      <%= text_area_tag "nota[infAdic][infCpl]", nil, class: "form-control", rows: 4 %>
+    </div>
+  </div>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
+    <div class="text-muted small">
+      O XML assinado permanece em Base64 e não é persistido. Toda a responsabilidade de armazenamento fica na API externa.
+    </div>
+  </div>
+<% end %>
+
+<script>
+(function () {
+  const notaDefault = {
+    ide: {
+      tpAmb: "2",
+      cGta: "7",
+      hashCSSI: "9L71n8OuHzIenL0ioTIcVxmnd9I=",
+      CPFUsuario: "12345678912"
+    },
+    emit: {
+      CPF: "99888971204",
+      xNome: "VAGNER BRUMATTI",
+      xFant: "SITIO AMAZONAS",
+      xLgr: "LINHA 140",
+      nro: "KM 7,5",
+      xCpl: "LADO SUL LOTE 61B GLEBA 10",
+      xBairro: "ZONA RURAL",
+      cMun: "1100502",
+      CEP: "76956000",
+      fone: "69999796094",
+      IE: "00000004201515"
+    },
+    dest: {
+      CNPJ: "31987952000336",
+      xNome: "NF-E EMITIDA EM AMBIENTE DE HOMOLOGACAO - SEM VALOR FISCAL",
+      xLgr: "N9KKQWkjXLzZE87b2K5mX7wlfWzL6iBCcTmjHaY9eouPt4KyuZofirMOafZÇ",
+      nro: "N9KKQWkjXLzZE87b2K5mX7wlfWzL6iBCcTmjHaY9eouPt4KyuZofirMOafZÇ",
+      xCpl: "N9KKQWkjXLzZE87b2K5mX7wlfWzL6iBCcTmjHaY9eouPt4KyuZofirMOafZÇ",
+      xBairro: "N9KKQWkjXLzZE87b2K5mX7wlfWzL6iBCcTmjHaY9eouPt4KyuZofirMOafZÇ",
+      cMun: "1100114",
+      CEP: "12345678",
+      fone: "12345678912345",
+      indIEDest: "1",
+      IE: "00000007056338"
+    },
+    transp: {
+      modFrete: "1",
+      transporta: {
+        CPF: "95021156004",
+        xNome: "01234567891",
+        IE: "71161689253422",
+        xEnder: "01234567891",
+        xMun: "01234567891",
+        UF: "RO"
+      },
+      veicTransp: {
+        placa: "ASD1456",
+        UF: "RO",
+        RNTC: "123456789"
+      },
+      vol: {
+        qVol: "1456",
+        esp: "RO",
+        marca: "123456789",
+        nVol: "RO"
+      }
+    },
+    pag: {
+      tPag: "17"
+    },
+    infAdic: {
+      infCpl: "Nam quis nulla Integer malesuada. %%%$$$$$@@@@&&&&&&"
+    }
+  };
+  const produtosDefault = [
+    {
+      cProd: "0",
+      xProd: "FEMEAS ACIMA 25 A 36 MESES",
+      NCM: "00000000",
+      CFOP: "5101",
+      uCom: "UN",
+      qCom: "6.0000",
+      vUnCom: "1",
+      uTrib: "UN",
+      qTrib: "6.0000",
+      CST: "41",
+      pRedBC: "1.00",
+      pICMS: "4.0000",
+      pICMSUFDest: "12.00"
+    }
+  ];
+
+  function parseDecimal(value) {
+    if (value === undefined || value === null) return NaN;
+    let normalized = String(value).trim().replace(/\s+/g, "");
+    const hasComma = normalized.includes(",");
+    const hasDot = normalized.includes(".");
+
+    if (hasComma && hasDot) {
+      normalized = normalized.replace(/\./g, "").replace(",", ".");
+    } else if (hasComma) {
+      normalized = normalized.replace(",", ".");
+    }
+
+    const parsed = parseFloat(normalized);
+    return Number.isFinite(parsed) ? parsed : NaN;
+  }
+
+  function formatCurrency(value) {
+    if (!Number.isFinite(value)) return null;
+    return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  }
+
+  function formatNumber(value) {
+    if (!Number.isFinite(value)) return null;
+    return value.toLocaleString("pt-BR", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 4
+    });
+  }
+
+  function atualizarResumoProduto(item, fallbackIndex) {
+    if (!item) return;
+
+    const nomeInput = item.querySelector('[data-field="xProd"]');
+    const qtdInput = item.querySelector('[data-field="qCom"]');
+    const valorInput = item.querySelector('[data-field="vUnCom"]');
+
+    const nome = nomeInput && nomeInput.value ? nomeInput.value.trim() : "";
+    const qtd = qtdInput ? parseDecimal(qtdInput.value) : NaN;
+    const valor = valorInput ? parseDecimal(valorInput.value) : NaN;
+    const total = Number.isFinite(qtd) && Number.isFinite(valor) ? qtd * valor : NaN;
+
+    const seq = typeof fallbackIndex === "number" ? fallbackIndex : Array.from(item.parentNode.children || []).indexOf(item);
+    const fallbackTitle = "Produto " + ((seq >= 0 ? seq : 0) + 1);
+
+    const titulo = item.querySelector(".produto-title");
+    if (titulo) {
+      titulo.textContent = nome || fallbackTitle;
+    }
+
+    const resumoNome = item.querySelector(".produto-resumo-nome");
+    if (resumoNome) {
+      resumoNome.textContent = nome || fallbackTitle;
+    }
+
+    const resumoValores = item.querySelector(".produto-resumo-valores");
+    if (resumoValores) {
+      if (Number.isFinite(qtd) && Number.isFinite(valor) && Number.isFinite(total)) {
+        const qtdText = formatNumber(qtd);
+        const valorText = formatCurrency(valor);
+        const totalText = formatCurrency(total);
+        resumoValores.textContent = qtdText && valorText && totalText
+          ? qtdText + " x " + valorText + " = " + totalText
+          : "";
+      } else if (Number.isFinite(qtd) || Number.isFinite(valor)) {
+        resumoValores.textContent = Number.isFinite(qtd)
+          ? "Qtd. " + formatNumber(qtd)
+          : "Valor unit. " + formatCurrency(valor);
+      } else {
+        resumoValores.textContent = "Informe quantidade e valor unitário";
+      }
+    }
+  }
+
+  function bindProdutoCard(item) {
+    if (!item || item.dataset.bound === "true") return;
+    item.dataset.bound = "true";
+
+    item.querySelectorAll("[data-field]").forEach(function (input) {
+      input.addEventListener("input", function () {
+        atualizarResumoProduto(item);
+      });
+    });
+
+    atualizarResumoProduto(item);
+  }
+
+  function setField(name, value) {
+    if (value === undefined || value === null) return;
+    const selector = '[name="' + name.replace(/"/g, '\\"') + '"]';
+    const field = document.querySelector(selector);
+    if (field && !field.value) {
+      field.value = value;
+    }
+  }
+
+  function fillGroup(base, data) {
+    if (!data) return;
+    Object.entries(data).forEach(function ([key, value]) {
+      if (value && typeof value === "object" && !Array.isArray(value)) {
+        fillGroup(base + "[" + key + "]", value);
+      } else {
+        setField(base + "[" + key + "]", value);
+      }
+    });
+  }
+
+  function preencherCamposPadrao() {
+    fillGroup("nota[ide]", notaDefault.ide);
+    fillGroup("nota[emit]", notaDefault.emit);
+    fillGroup("nota[dest]", notaDefault.dest);
+    fillGroup("nota[transp]", notaDefault.transp);
+    fillGroup("nota[pag]", notaDefault.pag);
+    fillGroup("nota[infAdic]", notaDefault.infAdic);
+  }
+
+  function getProdutosContainer() {
+    return document.getElementById("produtos-container");
+  }
+
+  function getTemplate() {
+    return document.getElementById("produto-template");
+  }
+
+  function ajustarIndices() {
+    const container = getProdutosContainer();
+    if (!container) return;
+
+    container.querySelectorAll(".produto-item").forEach(function (item, index) {
+      const title = item.querySelector(".produto-seq");
+      if (title) {
+        title.textContent = index + 1;
+      }
+
+      item.querySelectorAll("[data-field]").forEach(function (input) {
+        const field = input.dataset.field;
+        if (!field) return;
+        input.name = "nota[prods][" + index + "][" + field + "]";
+        input.id = "nota_prods_" + index + "_" + field;
+      });
+
+      atualizarResumoProduto(item, index);
+    });
+  }
+
+  function addProduto() {
+    const container = getProdutosContainer();
+    const template = getTemplate();
+    if (!container || !template) return;
+
+    const fragment = template.content.cloneNode(true);
+    fragment.querySelectorAll("input, textarea").forEach(function (input) {
+      input.value = "";
+    });
+
+    container.appendChild(fragment);
+    ajustarIndices();
+    if (container.lastElementChild) {
+      bindProdutoCard(container.lastElementChild);
+    }
+  }
+
+  function duplicarProduto(trigger) {
+    const container = getProdutosContainer();
+    if (!container) return;
+
+    const origem = trigger ? trigger.closest(".produto-item") : null;
+    if (!origem) {
+      addProduto();
+      return;
+    }
+
+    const clone = origem.cloneNode(true);
+    delete clone.dataset.bound;
+
+    clone.querySelectorAll("[data-field]").forEach(function (input) {
+      const field = input.dataset.field;
+      if (!field) return;
+      const origemInput = origem.querySelector('[data-field="' + field + '"]');
+      input.value = origemInput ? origemInput.value : "";
+    });
+
+    if (origem.nextSibling) {
+      container.insertBefore(clone, origem.nextSibling);
+    } else {
+      container.appendChild(clone);
+    }
+
+    ajustarIndices();
+    bindProdutoCard(clone);
+  }
+
+  function removeProduto(trigger) {
+    const container = getProdutosContainer();
+    if (!container) return;
+
+    const item = trigger.closest(".produto-item");
+    if (item) {
+      item.remove();
+    }
+
+    if (container.childElementCount === 0) {
+      addProduto();
+    } else {
+      ajustarIndices();
+    }
+  }
+
+  function inicializarProdutos() {
+    const container = getProdutosContainer();
+    const addButton = document.getElementById("adicionar-produto");
+    if (!container || !addButton) return;
+
+    addButton.addEventListener("click", function () {
+      addProduto();
+    });
+
+    if (container.childElementCount === 0) {
+      addProduto();
+    }
+
+    preencherProdutosPadrao();
+
+    container.querySelectorAll(".produto-item").forEach(function (item) {
+      bindProdutoCard(item);
+    });
+  }
+
+  function preencherProdutosPadrao() {
+    const container = getProdutosContainer();
+    if (!container || !produtosDefault.length) return;
+
+    const itens = container.querySelectorAll(".produto-item");
+    produtosDefault.forEach(function (produto, index) {
+      if (itens.length <= index) {
+        addProduto();
+      }
+      const targetItem = container.querySelectorAll(".produto-item")[index];
+      if (!targetItem) return;
+
+      Object.entries(produto).forEach(function ([campo, valor]) {
+        const input = targetItem.querySelector('[data-field="' + campo + '"]');
+        if (input && !input.value) {
+          input.value = valor;
+        }
+      });
+
+      atualizarResumoProduto(targetItem, index);
+    });
+  }
+
+  function initNotaForm() {
+    preencherCamposPadrao();
+    inicializarProdutos();
+  }
+
+  document.addEventListener("turbo:load", initNotaForm);
+  document.addEventListener("DOMContentLoaded", initNotaForm);
+
+  window.addProduto = addProduto;
+  window.removeProduto = removeProduto;
+  window.duplicarProduto = duplicarProduto;
+})();
+</script>
