@@ -155,12 +155,16 @@ crossorigin="anonymous"></script>
             </li>
         
             <li class="nav-item mt-4">
-              <%= link_to destroy_user_session_path,
-                          data: { turbo_method: :delete },
-                          class: "nav-link text-danger d-flex align-items-center sidebar-link" do %>
-                <i class="fa-solid fa-right-from-bracket me-2"></i>
-                <span>Sair</span>
-              <% end %>
+              <%= button_to destroy_user_session_path,
+  method: :delete,
+  class: "nav-link text-danger d-flex align-items-center sidebar-link",
+  form: { style: "display:inline;" } do %>
+
+  <i class="fa-solid fa-right-from-bracket me-2"></i>
+  <span>Sair</span>
+
+<% end %>
+
             </li>
         
           </ul>

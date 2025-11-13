@@ -1,6 +1,7 @@
 require "securerandom"
 
 class NotasFiscaisController < ApplicationController
+  before_action :authenticate_user!
   before_action :set_nota_fiscal, only: %i[edit update destroy]
 
   def index
