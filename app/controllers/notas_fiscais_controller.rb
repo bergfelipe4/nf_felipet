@@ -4,25 +4,26 @@ class NotasFiscaisController < ApplicationController
   before_action :authenticate_user!
   before_action :set_nota_fiscal, only: %i[edit update destroy]
 
-  def index
-    @cpf_consulta = params[:cpf].presence || cpf_padrao
-    @consulta_result = nil
-    @consulta_error = nil
-    @notas_consulta = []
+def index
+  @cpf_consulta   = current_user.cpf
+  @consulta_result = nil
+  @consulta_error  = nil
+  @notas_consulta  = []
 
-    if @cpf_consulta.present?
-      resposta = ApiCliente.consultar_notas(@cpf_consulta)
+  if @cpf_consulta.present?
+    resposta = ApiCliente.consultar_notas(@cpf_consulta)
 
-      if resposta[:success]
-        @consulta_result = resposta[:body] || {}
-        @notas_consulta = Array(@consulta_result["notas"])
-      else
-        @consulta_error = resposta[:error] || "Não foi possível consultar as notas."
-      end
+    if resposta[:success]
+      @consulta_result = resposta[:body] || {}
+      @notas_consulta  = Array(@consulta_result["notas"])
     else
-      @consulta_error = "Informe um CPF para consultar as notas emitidas."
+      @consulta_error = resposta[:error] || "Não foi possível consultar as notas."
     end
+  else
+    @consulta_error = "Seu usuário ainda não possui CPF cadastrado."
   end
+end
+
 
   def show
     log = EmissionLog.find_by(uuid: params[:id])

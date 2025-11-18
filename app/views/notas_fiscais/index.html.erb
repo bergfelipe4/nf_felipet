@@ -4,36 +4,25 @@
      time ? l(time, format: :short) : value
    end %>
 
+<!-- HEADER -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
   <div>
     <h1 class="h3 mb-1">Notas emitidas via API</h1>
-    <p class="text-muted mb-0">Consulte diretamente o serviço externo usando o CPF do emitente e visualize o status detalhado de cada NFA-e.</p>
+    <p class="text-muted mb-0">
+      As notas abaixo foram consultadas automaticamente usando o CPF cadastrado no seu perfil: 
+      <strong><%= current_user.cpf %></strong>
+    </p>
   </div>
+
   <%= link_to "Emitir nova nota", new_notas_fiscai_path, class: "btn btn-outline-primary" %>
 </div>
 
-<div class="card shadow-sm border-0 mb-4">
-  <div class="card-body">
-    <%= form_with url: notas_fiscais_path, method: :get, local: true, class: "row g-3 align-items-end" do %>
-      <div class="col-md-4">
-        <%= label_tag :cpf, "CPF do emitente", class: "form-label" %>
-        <%= text_field_tag :cpf, @cpf_consulta, class: "form-control", placeholder: "Somente números" %>
-      </div>
-      <div class="col-md-3">
-        <%= label_tag :dummy, " ", class: "form-label d-none d-md-block" %>
-        <%= submit_tag "Consultar notas", class: "btn btn-primary w-100" %>
-      </div>
-      <div class="col-md-5 text-muted small">
-        <strong>Dica:</strong> caso não lembre o CPF, basta emitir uma nova nota e voltaremos a preenchê-lo automaticamente.
-      </div>
-    <% end %>
-  </div>
-</div>
-
+<!-- ALERTA DE ERRO -->
 <% if @consulta_error.present? %>
-  <div class="alert alert-warning"><%= @consulta_error %></div>
+  <div class="alert alert-warning shadow-sm"><%= @consulta_error %></div>
 <% end %>
 
+<!-- CARDS DE STATUS DO RETORNO -->
 <% if @consulta_result.present? %>
   <div class="row gy-3 mb-4">
     <div class="col-md-4">
@@ -44,6 +33,7 @@
         </div>
       </div>
     </div>
+
     <div class="col-md-8">
       <div class="card border-0 shadow-sm h-100">
         <div class="card-body">
@@ -55,73 +45,90 @@
   </div>
 <% end %>
 
-<% if @notas_consulta.present? %>
-  <div class="timeline">
-    <% @notas_consulta.each_with_index do |nota, index| %>
-      <% status = nota["CSTAT_AUTORIZAR"] || nota["CSTAT_CONSULTA"] %>
-      <% motivo = nota["XMOTIVO_AUTORIZAR"] || nota["XMOTIVO_CONSULTA"] %>
-      <% aprovacao = status.to_s.start_with?("1") %>
-      <% badge_class = aprovacao ? "bg-success" : "bg-warning text-dark" %>
+ <div class="card-body p-0">
+    <table class="table table-hover mb-0 align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Chave</th>
+          <th>Série</th>
+          <th>Emissão</th>
+          <th>Status</th>
+          <th class="text-center">Ações</th>
+        </tr>
+      </thead>
+<tbody>
+  <% if @notas_consulta.present? %>
+    <% @notas_consulta.each do |nota| %>
 
-      <div class="card shadow-sm border-0 mb-4">
-        <div class="card-body">
-          <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
-            <div>
-              <span class="badge <%= badge_class %> px-3 py-2">cStat: <%= status || "—" %></span>
-              <span class="badge bg-light text-dark border ms-2">Série <%= nota["SERIE"] || "—" %> · NF <%= nota["NNF"] || "—" %></span>
-            </div>
-            <small class="text-muted">Consulta #<%= index + 1 %> • <%= l(Time.zone.parse(nota["created_at"])) rescue "—" %></small>
-          </div>
+      <% numero = nota["CHAVE"] || "—" %>
+      <% serie  = nota["SERIE"] || "—" %>
+      <% data   = format_datetime.call(nota["DT_INI"]) %>
 
-          <h5 class="mb-1">Chave de acesso</h5>
-          <p class="font-monospace text-break mb-3"><%= nota["CHAVE"] || "—" %></p>
+      <% cstat   = (nota["CSTAT_AUTORIZAR"] || nota["CSTAT_CONSULTA"]).to_i %>
+      <% motivo  = nota["XMOTIVO_AUTORIZAR"] || nota["XMOTIVO_CONSULTA"] || "—" %>
 
-          <div class="row gy-3">
-            <div class="col-md-4">
-              <p class="text-muted small mb-1">Emitente</p>
-              <div class="fw-semibold"><%= nota["EMIT_ID"] || "—" %></div>
-            </div>
-            <div class="col-md-4">
-              <p class="text-muted small mb-1">Ambiente / Série</p>
-              <div class="fw-semibold">Ambiente <%= nota["GTA"] || "?" %> · Série <%= nota["SERIE"] || "—" %></div>
-            </div>
-            <div class="col-md-4">
-              <p class="text-muted small mb-1">Status</p>
-              <div class="fw-semibold"><%= motivo || "—" %></div>
-            </div>
-          </div>
+      <%# 🔵 Lógica de cor baseada no cStat %>
+      <% badge_class, icon =
+        if cstat.between?(100, 199)
+          ["bg-success", "fa-check-circle"]          # OK
+        elsif cstat.between?(200, 299)
+          ["bg-warning text-dark", "fa-exclamation-circle"] # Corrigir
+        elsif cstat.between?(300, 399)
+          ["bg-danger", "fa-times-circle"]           # Erro grave
+        else
+          ["bg-secondary", "fa-question-circle"]     # Valor estranho
+        end
+      %>
 
-          <hr class="my-4">
+      <tr>
+        <td><%= numero %></td>
+        <td><%= serie %></td>
+        <td><%= data %></td>
 
-          <div class="row gy-3 align-items-start">
-            <div class="col-md-6">
-              <p class="text-muted small mb-1">Datas importantes</p>
-              <ul class="list-unstyled mb-0">
-                <li><strong>Envio:</strong> <%= format_datetime.call(nota["DT_INI"]) %></li>
-                <li><strong>WebService Autorização:</strong> <%= format_datetime.call(nota["DT_WS_AUTORIZACAO"]) %></li>
-                <li><strong>Consulta:</strong> <%= format_datetime.call(nota["DT_WS_CONSULTA"]) %></li>
-              </ul>
-            </div>
-            <div class="col-md-6">
-              <p class="text-muted small mb-1">Protocolos & códigos</p>
-              <ul class="list-unstyled mb-0">
-                <li><strong>Protocolo:</strong> <%= nota["NPROT"].presence || "—" %></li>
-                <li><strong>Recibo:</strong> <%= nota["NREC"].presence || "—" %></li>
-                <li><strong>IP:</strong> <%= nota["IP"] || "—" %></li>
-              </ul>
-            </div>
-          </div>
+        <td>
+          <span class="badge <%= badge_class %>">
+            <i class="fas <%= icon %> me-1"></i>
+            <%= "#{cstat} — #{motivo}" %>
+          </span>
+        </td>
 
-          <% if nota["XML_ASSINADO_AUTORIZACAO"].present? %>
-            <details class="mt-4">
-              <summary class="mb-2 text-primary">Ver XML assinado (Base64)</summary>
-              <pre class="bg-light p-3 rounded border small mb-0"><%= nota["XML_ASSINADO_AUTORIZACAO"] %></pre>
-            </details>
+        <td class="text-center">
+
+          <%# 🔍 Visualizar %>
+          <%= link_to "#", class: "btn btn-sm btn-outline-primary me-1" do %>
+            <i class="fas fa-eye"></i>
           <% end %>
-        </div>
-      </div>
+
+          <%# ⬇️ Baixar XML %>
+          <% if nota["XML_ASSINADO_AUTORIZACAO"].present? %>
+            <%= link_to "#", class: "btn btn-sm btn-outline-secondary me-1" do %>
+              <i class="fas fa-file-download"></i>
+            <% end %>
+          <% else %>
+            <button class="btn btn-sm btn-outline-secondary me-1" disabled>
+              <i class="fas fa-file-download"></i>
+            </button>
+          <% end %>
+
+          <%# 🗑️ Excluir %>
+          <%= link_to "#", class: "btn btn-sm btn-outline-danger" do %>
+            <i class="fas fa-trash-alt"></i>
+          <% end %>
+
+        </td>
+      </tr>
+
     <% end %>
+
+  <% else %>
+    <tr>
+      <td colspan="5" class="text-center text-muted py-4">
+        Nenhuma nota encontrada para exibir.
+      </td>
+    </tr>
+  <% end %>
+</tbody>
+
+
+    </table>
   </div>
-<% elsif @cpf_consulta.present? && @consulta_error.blank? %>
-  <div class="alert alert-info">Nenhuma nota encontrada para o CPF informado.</div>
-<% end %>

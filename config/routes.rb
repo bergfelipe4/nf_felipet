@@ -3,10 +3,16 @@ Rails.application.routes.draw do
   devise_for :users, skip: [:registrations]
 
   # Reativando REGISTRATIONS porém com caminhos customizados
-  devise_scope :user do
-    get  "/segredo",       to: "devise/registrations#new",    as: :new_user_registration
-    post "/segredo",       to: "devise/registrations#create", as: :user_registration
-  end
+ devise_scope :user do
+  # signup
+  get  "/segredo",       to: "devise/registrations#new",    as: :new_user_registration
+  post "/segredo",       to: "devise/registrations#create", as: :user_registration
+
+  # EDITAR PERFIL
+  get "/perfil/editar",  to: "devise/registrations#edit",   as: :edit_user_registration
+  put "/perfil",         to: "devise/registrations#update", as: :user_registration_update
+end
+
 
   # Rotas autenticadas
   authenticated :user do
