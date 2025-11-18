@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get 'home/index'
   # Rotas Devise (removendo ROTAS DE REGISTRO normais)
   devise_for :users, skip: [:registrations]
 
@@ -22,7 +23,7 @@ end
   # Rotas não autenticadas
   devise_scope :user do
     unauthenticated do
-      root to: "devise/sessions#new", as: :unauthenticated_root
+      root to: "home#index"
     end
   end
 
