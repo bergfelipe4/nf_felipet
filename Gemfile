@@ -14,6 +14,12 @@ gem "devise"
 gem "pg"
 gem "httparty"
 gem 'dotenv-rails'
+# Busca e filtros
+gem "ransack"
+
+# Paginação
+gem "pagy"
+
 
 
 # Use the Puma web server [https://github.com/puma/puma]
@@ -30,7 +36,7 @@ gem "stimulus-rails"
 
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
-
+gem "byebug"
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 

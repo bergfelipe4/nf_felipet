@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_11_18_125140) do
+ActiveRecord::Schema[7.1].define(version: 2025_11_18_145805) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,6 +31,8 @@ ActiveRecord::Schema[7.1].define(version: 2025_11_18_125140) do
     t.jsonb "resposta_payload", default: {}, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "chave"
+    t.index ["chave"], name: "index_emission_logs_on_chave", unique: true
     t.index ["user_id"], name: "index_emission_logs_on_user_id"
     t.index ["uuid"], name: "index_emission_logs_on_uuid", unique: true
   end

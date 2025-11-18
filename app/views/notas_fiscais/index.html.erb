@@ -6,14 +6,7 @@
 
 <!-- HEADER -->
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
-  <div>
-    <h1 class="h3 mb-1">Notas emitidas no Sistema</h1>
-    <p class="text-muted mb-0">
-      As notas abaixo foram consultadas automaticamente usando o CPF cadastrado no seu perfil: 
-      <strong><%= current_user.cpf %></strong>
-    </p>
-  </div>
-
+    <h1 class="h3 ">Notas emitidas no Sistema</h1>
   <%= link_to "Emitir nova nota", new_notas_fiscai_path, class: "btn btn-outline-primary" %>
 </div>
 
@@ -21,29 +14,33 @@
 <% if @consulta_error.present? %>
   <div class="alert alert-warning shadow-sm"><%= @consulta_error %></div>
 <% end %>
-
-<!-- CARDS DE STATUS DO RETORNO -->
-<% if @consulta_result.present? %>
-  <div class="row gy-3 mb-4">
-    <div class="col-md-4">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body">
-          <p class="text-muted mb-1">Código HTTP</p>
-          <h3 class="h4 mb-0"><%= @consulta_result["codigo"] || "—" %></h3>
-        </div>
+<div class="card border-0 shadow-sm mb-4">
+  <div class="card-body">
+    <form action="<%= notas_fiscais_path %>" method="get" class="row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Chave</label>
+        <input name="q[CHAVE_cont]" value="<%= params.dig(:q, :CHAVE_cont) %>" class="form-control" placeholder="parte da chave">
       </div>
-    </div>
 
-    <div class="col-md-8">
-      <div class="card border-0 shadow-sm h-100">
-        <div class="card-body">
-          <p class="text-muted mb-1">Mensagem retornada</p>
-          <h3 class="h5 mb-0"><%= @consulta_result["mensagem"] || "—" %></h3>
-        </div>
+      <div class="col-md-3">
+        <label class="form-label">Série</label>
+        <input name="q[SERIE_eq]" value="<%= params.dig(:q, :SERIE_eq) %>" class="form-control" placeholder="Série">
       </div>
-    </div>
+
+      <div class="col-md-3">
+        <label class="form-label">cStat</label>
+        <input name="q[CSTAT_eq]" value="<%= params.dig(:q, :CSTAT_eq) %>" class="form-control" placeholder="ex: 100">
+      </div>
+
+      <div class="col-md-2 d-flex align-items-end">
+        <button class="btn btn-primary w-100">Buscar</button>
+      </div>
+    </form>
   </div>
-<% end %>
+</div>
+
+
+
 
  <div class="card-body p-0">
     <table class="table table-hover mb-0 align-middle">
@@ -57,8 +54,8 @@
         </tr>
       </thead>
 <tbody>
-  <% if @notas_consulta.present? %>
-    <% @notas_consulta.each do |nota| %>
+  <% if @notas_paginadas.present? %>
+    <% @notas_paginadas.each do |nota| %>
 
       <% numero = nota["CHAVE"] || "—" %>
       <% serie  = nota["SERIE"] || "—" %>
@@ -67,16 +64,15 @@
       <% cstat   = (nota["CSTAT_AUTORIZAR"] || nota["CSTAT_CONSULTA"]).to_i %>
       <% motivo  = nota["XMOTIVO_AUTORIZAR"] || nota["XMOTIVO_CONSULTA"] || "—" %>
 
-      <%# 🔵 Lógica de cor baseada no cStat %>
       <% badge_class, icon =
         if cstat.between?(100, 199)
-          ["bg-success", "fa-check-circle"]          # OK
+          ["bg-success", "fa-check-circle"]
         elsif cstat.between?(200, 299)
-          ["bg-warning text-dark", "fa-exclamation-circle"] # Corrigir
+          ["bg-warning text-dark", "fa-exclamation-circle"]
         elsif cstat.between?(300, 399)
-          ["bg-danger", "fa-times-circle"]           # Erro grave
+          ["bg-danger", "fa-times-circle"]
         else
-          ["bg-secondary", "fa-question-circle"]     # Valor estranho
+          ["bg-secondary", "fa-question-circle"]
         end
       %>
 
@@ -93,13 +89,11 @@
         </td>
 
         <td class="text-center">
-
-          <%# 🔍 Visualizar %>
-          <%= link_to "#", class: "btn btn-sm btn-outline-primary me-1" do %>
+          <%= link_to notas_fiscai_path(nota["CHAVE"], cpf: @cpf_consulta),
+                      class: "btn btn-sm btn-outline-primary me-1" do %>
             <i class="fas fa-eye"></i>
           <% end %>
 
-          <%# ⬇️ Baixar XML %>
           <% if nota["XML_ASSINADO_AUTORIZACAO"].present? %>
             <%= link_to "#", class: "btn btn-sm btn-outline-secondary me-1" do %>
               <i class="fas fa-file-download"></i>
@@ -110,16 +104,13 @@
             </button>
           <% end %>
 
-          <%# 🗑️ Excluir %>
           <%= link_to "#", class: "btn btn-sm btn-outline-danger" do %>
             <i class="fas fa-trash-alt"></i>
           <% end %>
-
         </td>
       </tr>
 
     <% end %>
-
   <% else %>
     <tr>
       <td colspan="5" class="text-center text-muted py-4">
@@ -130,5 +121,12 @@
 </tbody>
 
 
+
+
     </table>
+<div class="d-flex justify-content-center my-3">
+  <%== pagy_bootstrap_nav(@pagy) %>
+</div>
+
+
   </div>
