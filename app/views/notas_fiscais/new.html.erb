@@ -65,7 +65,7 @@
         <span class="step-index">5</span>
         <span class="step-text">
           <strong>Pagamento</strong>
-          <small>Forma e condição</small>
+          <small>Forma e Observação</small>
         </span>
       </button>
     </li>
@@ -74,101 +74,184 @@
   <div class="tab-content border border-top-0 p-4 bg-white rounded-bottom shadow-sm" id="notaFiscalTabsContent">
 
     <div class="tab-pane fade show active" id="tab-emit" role="tabpanel" aria-labelledby="tab-emit-tab">
-      <div class="row g-3">
-        <div class="col-md-3">
-          <%= label_tag "nota_emit_CPF", "CPF", class: "form-label" %>
-          <%= text_field_tag "nota[emit][CPF]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-5">
-          <%= label_tag "nota_emit_xNome", "Razão social (xNome)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][xNome]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-4">
-          <%= label_tag "nota_emit_xFant", "Nome fantasia (xFant)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][xFant]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-5">
-          <%= label_tag "nota_emit_xLgr", "Logradouro (xLgr)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][xLgr]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_emit_nro", "Número (nro)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][nro]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-5">
-          <%= label_tag "nota_emit_xCpl", "Complemento (xCpl)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][xCpl]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-4">
-          <%= label_tag "nota_emit_xBairro", "Bairro (xBairro)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][xBairro]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_emit_cMun", "Município (cMun)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][cMun]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_emit_CEP", "CEP", class: "form-label" %>
-          <%= text_field_tag "nota[emit][CEP]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-3">
-          <%= label_tag "nota_emit_fone", "Telefone", class: "form-label" %>
-          <%= text_field_tag "nota[emit][fone]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-3">
-          <%= label_tag "nota_emit_IE", "Inscrição estadual (IE)", class: "form-label" %>
-          <%= text_field_tag "nota[emit][IE]", nil, class: "form-control" %>
+    <!-- ======================= -->
+<!-- DADOS PESSOAIS / EMITENTE -->
+<!-- ======================= -->
+<div class="card mb-4">
+  <div class="card-header fw-bold">Dados do Emitente</div>
+  <div class="card-body">
+    <div class="row g-3">
+      
+      <div class="col-md-3">
+        <%= label_tag "nota_emit_CPF", "CPF", class: "form-label" %>
+        <%= text_field_tag "nota[emit][CPF]", nil,
+              class: "form-control",
+              data: { controller: "mask", mask: "cpf" } %>
+      </div>
+
+      <div class="col-md-5">
+        <%= label_tag "nota_emit_xNome", "Razão Social (xNome)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][xNome]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-4">
+        <%= label_tag "nota_emit_xFant", "Nome Fantasia (xFant)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][xFant]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-3">
+        <%= label_tag "nota_emit_fone", "Telefone", class: "form-label" %>
+        <%= text_field_tag "nota[emit][fone]", nil,
+              class: "form-control",
+              data: { controller: "mask", mask: "phone" } %>
+      </div>
+
+      <div class="col-md-3">
+        <%= label_tag "nota_emit_IE", "Inscrição Estadual (IE)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][IE]", nil, class: "form-control" %>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ======================= -->
+<!-- ENDEREÇO DO EMITENTE -->
+<!-- ======================= -->
+<div class="card mb-4">
+  <div class="card-header fw-bold">Endereço</div>
+  <div class="card-body">
+    <div class="row g-3">
+
+      <div class="col-md-5">
+        <%= label_tag "nota_emit_xLgr", "Rua (xLgr)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][xLgr]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-2">
+        <%= label_tag "nota_emit_nro", "Número (nro)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][nro]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-5">
+        <%= label_tag "nota_emit_xCpl", "Complemento (xCpl)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][xCpl]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-4">
+        <%= label_tag "nota_emit_xBairro", "Bairro (xBairro)", class: "form-label" %>
+        <%= text_field_tag "nota[emit][xBairro]", nil, class: "form-control" %>
+      </div>
+
+     <div class="col-md-2">
+  <%= label_tag "nota_emit_cMun", "Município (cMun)", class: "form-label" %>
+  <%= select_tag "nota[emit][cMun]",
+        options_for_select([
+          ["Porto Velho - RO", "1100205"],
+          ["Ji-Paraná - RO", "1100122"],
+          ["Ariquemes - RO", "1100024"],
+          ["Candeias do Jamari - RO", "1100800"],
+          ["Vilhena - RO", "1100304"],
+          ["Guajará-Mirim - RO", "1100106"],
+          ["Cacoal - RO", "1100040"],
+          ["Jaru - RO", "1100114"],
+          ["Machadinho d’Oeste - RO", "1100098"],
+          ["Pimenta Bueno - RO", "1100189"],
+        ]),
+        class: "form-select" %>
+</div>
+
+
+      <div class="col-md-2">
+        <%= label_tag "nota_emit_CEP", "CEP", class: "form-label" %>
+        <%= text_field_tag "nota[emit][CEP]", nil, class: "form-control" %>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+    </div>
+
+    <div class="tab-pane fade" id="tab-dest" role="tabpanel" aria-labelledby="tab-dest-tab">
+      <div class="card mb-4">
+  <div class="card-header fw-bold">Dados do Destinatário</div>
+
+  <div class="card-body">
+    <!-- Dados principais -->
+    <div class="row g-3 mb-3">
+
+      <div class="col-md-3">
+        <%= label_tag "nota_dest_CNPJ", "CNPJ", class: "form-label" %>
+        <%= text_field_tag "nota[dest][CNPJ]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-5">
+        <%= label_tag "nota_dest_xNome", "Razão social (xNome)", class: "form-label" %>
+        <%= text_field_tag "nota[dest][xNome]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-2">
+        <%= label_tag "nota_dest_fone", "Telefone", class: "form-label" %>
+        <%= text_field_tag "nota[dest][fone]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-1">
+        <%= label_tag "nota_dest_indIEDest", "indIEDest", class: "form-label" %>
+        <%= text_field_tag "nota[dest][indIEDest]", nil, class: "form-control" %>
+      </div>
+
+      <div class="col-md-1">
+        <%= label_tag "nota_dest_IE", "IE", class: "form-label" %>
+        <%= text_field_tag "nota[dest][IE]", nil, class: "form-control" %>
+      </div>
+
+    </div>
+
+    <!-- Endereço -->
+    <div class="card mt-2">
+      <div class="card-header small">Endereço</div>
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-md-5">
+            <%= label_tag "nota_dest_xLgr", "Logradouro (xLgr)", class: "form-label" %>
+            <%= text_field_tag "nota[dest][xLgr]", nil, class: "form-control" %>
+          </div>
+
+          <div class="col-md-2">
+            <%= label_tag "nota_dest_nro", "Número (nro)", class: "form-label" %>
+            <%= text_field_tag "nota[dest][nro]", nil, class: "form-control" %>
+          </div>
+
+          <div class="col-md-5">
+            <%= label_tag "nota_dest_xCpl", "Complemento (xCpl)", class: "form-label" %>
+            <%= text_field_tag "nota[dest][xCpl]", nil, class: "form-control" %>
+          </div>
+
+          <div class="col-md-4">
+            <%= label_tag "nota_dest_xBairro", "Bairro (xBairro)", class: "form-label" %>
+            <%= text_field_tag "nota[dest][xBairro]", nil, class: "form-control" %>
+          </div>
+
+          <div class="col-md-2">
+            <%= label_tag "nota_dest_cMun", "Município (cMun)", class: "form-label" %>
+            <%= text_field_tag "nota[dest][cMun]", nil, class: "form-control" %>
+          </div>
+
+          <div class="col-md-2">
+            <%= label_tag "nota_dest_CEP", "CEP", class: "form-label" %>
+            <%= text_field_tag "nota[dest][CEP]", nil, class: "form-control" %>
+          </div>
+
         </div>
       </div>
     </div>
 
-    <div class="tab-pane fade" id="tab-dest" role="tabpanel" aria-labelledby="tab-dest-tab">
-      <div class="row g-3">
-        <div class="col-md-4">
-          <%= label_tag "nota_dest_CNPJ", "CNPJ", class: "form-label" %>
-          <%= text_field_tag "nota[dest][CNPJ]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-8">
-          <%= label_tag "nota_dest_xNome", "Razão social (xNome)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][xNome]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-5">
-          <%= label_tag "nota_dest_xLgr", "Logradouro (xLgr)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][xLgr]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_dest_nro", "Número (nro)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][nro]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-5">
-          <%= label_tag "nota_dest_xCpl", "Complemento (xCpl)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][xCpl]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-4">
-          <%= label_tag "nota_dest_xBairro", "Bairro (xBairro)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][xBairro]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_dest_cMun", "Município (cMun)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][cMun]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_dest_CEP", "CEP", class: "form-label" %>
-          <%= text_field_tag "nota[dest][CEP]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-3">
-          <%= label_tag "nota_dest_fone", "Telefone", class: "form-label" %>
-          <%= text_field_tag "nota[dest][fone]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-2">
-          <%= label_tag "nota_dest_indIEDest", "indIEDest", class: "form-label" %>
-          <%= text_field_tag "nota[dest][indIEDest]", nil, class: "form-control" %>
-        </div>
-        <div class="col-md-3">
-          <%= label_tag "nota_dest_IE", "Inscrição estadual (IE)", class: "form-label" %>
-          <%= text_field_tag "nota[dest][IE]", nil, class: "form-control" %>
-        </div>
-      </div>
+  </div>
+</div>
+
     </div>
 
     <div class="tab-pane fade" id="tab-prods" role="tabpanel" aria-labelledby="tab-prods-tab">
@@ -360,6 +443,11 @@
           <%= label_tag "nota_pag_tPag", "Forma de pagamento (tPag)", class: "form-label" %>
           <%= text_field_tag "nota[pag][tPag]", nil, class: "form-control" %>
         </div>
+         <hr>
+      <h5 class="">Informações complementares</h5>
+      <%= label_tag "nota_infAdic_infCpl", "Informações complementares (infCpl)", class: "form-label" %>
+      <%= text_area_tag "nota[infAdic][infCpl]", nil, class: "form-control", rows: 4 %>
+   
       </div>
       <br>
       <%= f.button :submit, class: "btn btn-outline-success d-inline-flex align-items-center gap-2" do %>
@@ -369,13 +457,7 @@
     </div>
   </div>
   <hr>
-  <div class="card shadow-sm border-0 mt-4">
-    <div class="card-body">
-      <h5 class="mb-3">Informações complementares</h5>
-      <%= label_tag "nota_infAdic_infCpl", "Informações complementares (infCpl)", class: "form-label" %>
-      <%= text_area_tag "nota[infAdic][infCpl]", nil, class: "form-control", rows: 4 %>
-    </div>
-  </div>
+
 
   <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mt-4">
     <div class="text-muted small">
@@ -728,4 +810,90 @@
   window.removeProduto = removeProduto;
   window.duplicarProduto = duplicarProduto;
 })();
+
 </script>
+
+<script>
+document.addEventListener("turbo:load", initMasks);
+document.addEventListener("DOMContentLoaded", initMasks);
+
+function initMasks() {
+
+  function maskCPF(v) {
+    return v
+      .replace(/\D/g, "")
+      .replace(/^(\d{3})(\d)/, "$1.$2")
+      .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+      .replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/, "$1.$2.$3-$4")
+      .slice(0, 14);
+  }
+
+  function maskPhone(v) {
+    v = v.replace(/\D/g, "");
+    if (v.length <= 10) {
+      return v
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{4})(\d{1,4})$/, "$1-$2")
+        .slice(0, 14);
+    } else {
+      return v
+        .replace(/^(\d{2})(\d)/, "($1) $2")
+        .replace(/(\d{5})(\d{1,4})$/, "$1-$2")
+        .slice(0, 15);
+    }
+  }
+
+  function maskCEP(v) {
+    return v
+      .replace(/\D/g, "")
+      .replace(/^(\d{5})(\d)/, "$1-$2")
+      .slice(0, 9);
+  }
+
+  function applyMask(el, type) {
+    if (!el) return;
+    let value = el.value;
+
+    if (type === "cpf") el.value = maskCPF(value);
+    if (type === "phone") el.value = maskPhone(value);
+    if (type === "cep") el.value = maskCEP(value);
+  }
+
+  function attachMask(el, type) {
+    if (!el) return;
+
+    applyMask(el, type);
+
+    el.addEventListener("input", function () {
+      applyMask(el, type);
+    });
+
+    el.addEventListener("paste", function () {
+      setTimeout(() => applyMask(el, type), 0);
+    });
+  }
+
+  // Seleciona pelo name (mais seguro)
+  const cpfs   = document.getElementsByName("nota[emit][CPF]");
+  const phones = document.getElementsByName("nota[emit][fone]");
+  const ceps   = document.getElementsByName("nota[emit][CEP]");
+
+  for (let el of cpfs) attachMask(el, "cpf");
+  for (let el of phones) attachMask(el, "phone");
+  for (let el of ceps) attachMask(el, "cep");
+
+  // ==========================
+  // REMOVE MÁSCARAS AO ENVIAR
+  // ==========================
+
+  document.querySelectorAll("form").forEach(form => {
+    form.addEventListener("submit", function () {
+      for (let el of cpfs)   el.value = el.value.replace(/\D/g, "");
+      for (let el of phones) el.value = el.value.replace(/\D/g, "");
+      for (let el of ceps)   el.value = el.value.replace(/\D/g, "");
+    });
+  });
+
+}
+</script>
+

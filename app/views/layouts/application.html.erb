@@ -38,145 +38,94 @@ src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.j
 crossorigin="anonymous"></script>
 
 
-    <style>
- /* Sidebar padrão */
-.sidebar {
-  width: 240px;
-  min-height: 100vh;
-  transition: width 0.25s ease;
-}
 
-/* Links */
-.sidebar-link {
-  padding: 10px 14px;
-  border-radius: 6px;
-  transition: background 0.2s ease;
-}
-
-.sidebar-link:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-/* Ícones */
-.sidebar-link i {
-  font-size: 1.2rem;
-}
-
-/* ----------------------------- */
-/* TABLET — sidebar estreita     */
-/* ----------------------------- */
-@media (max-width: 992px) {
-  .sidebar {
-    width: 80px; /* igual ao modelo da imagem */
-  }
-
-  /* Esconde textos */
-  .sidebar span {
-    display: none;
-  }
-
-  /* Esconde título normal */
-  .logo-text {
-    display: none;
-  }
-
-  /* Centraliza o ícone do topo */
-  .sidebar-header {
-    justify-content: center;
-  }
-
-  /* Ícones centralizados */
-  .sidebar-link {
-    justify-content: center;
-  }
-
-  .sidebar-link i {
-    margin: 0;
-  }
-}
-
-    </style>
   </head>
 
   <body class="bg-light">
     <% if user_signed_in? %>
-      <div class="d-flex">
         <!-- 🧭 Sidebar -->
-        <nav class="sidebar bg-dark text-white p-3">
+   <nav class="navbar navbar-expand-lg navbar-dark px-3" style="background:#0d1b2a;">
+  <div class="container-fluid">
 
-          <!-- Cabeçalho -->
-          <div class="sidebar-header d-flex align-items-center mb-4">
-            <i class="fa-solid fa-file-invoice-dollar text-warning fs-4 me-2 logo-icon"></i>
-            <span class="logo-text h5 m-0">NF Emissor</span>
-          </div>
-        
-          <ul class="nav flex-column">
-        
-            <li class="nav-item">
-              <%= link_to authenticated_root_path, class: "nav-link d-flex align-items-center sidebar-link" do %>
-                <i class="fa-solid fa-chart-line me-2"></i>
-                <span>Dashboard</span>
-              <% end %>
-            </li>
-        
-            <li class="nav-item">
-              <% if current_user.certificate_installed? %>
-                <%= link_to new_notas_fiscai_path, class: "nav-link d-flex align-items-center sidebar-link" do %>
-                  <i class="fa-solid fa-file-circle-plus me-2"></i>
-                  <span>Emitir Nota</span>
-                <% end %>
-              <% else %>
-                <a class="nav-link disabled d-flex align-items-center sidebar-link">
-                  <i class="fa-solid fa-file-circle-plus me-2"></i>
-                  <span>Emitir Nota</span>
-                </a>
-              <% end %>
-            </li>
-        
-            <li class="nav-item">
-              <% if current_user.certificate_installed? %>
-                <%= link_to notas_fiscais_path, class: "nav-link d-flex align-items-center sidebar-link" do %>
-                  <i class="fa-solid fa-folder-open me-2"></i>
-                  <span>Notas Emitidas</span>
-                <% end %>
-              <% else %>
-                <a class="nav-link disabled d-flex align-items-center sidebar-link">
-                  <i class="fa-solid fa-folder-open me-2"></i>
-                  <span>Notas Emitidas</span>
-                </a>
-              <% end %>
-            </li>
-        
-            <li class="nav-item">
-              <%= link_to new_certificate_path, class: "nav-link d-flex align-items-center sidebar-link" do %>
-                <i class="fa-solid fa-shield-halved me-2"></i>
-                <span>Certificado</span>
-              <% end %>
-            </li>
+    <!-- Logo -->
+    <a class="navbar-brand d-flex align-items-center" href="#">
+      <i class="fa-solid fa-file-invoice-dollar text-warning fs-4 me-2"></i>
+      <span>NF Emissor</span>
+    </a>
 
-             <li class="nav-item">
-              <%= link_to edit_user_registration_path, class: "nav-link d-flex align-items-center sidebar-link" do %>
-                <i class="fa-solid fa-user me-2"></i>
-                <span>Perfil</span>
-              <% end %>
-            </li>
-        
-            <li class="nav-item mt-4">
-              <%= button_to destroy_user_session_path,
-  method: :delete,
-  class: "nav-link text-danger d-flex align-items-center sidebar-link",
-  form: { style: "display:inline;" } do %>
+    <!-- Botão do menu no mobile -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-  <i class="fa-solid fa-right-from-bracket me-2"></i>
-  <span>Sair</span>
+    <!-- Itens -->
+    <div class="collapse navbar-collapse" id="mainNavbar">
+      <ul class="navbar-nav ms-auto">
 
-<% end %>
+        <!-- Dashboard -->
+        <li class="nav-item me-2">
+          <%= link_to authenticated_root_path, class: "btn btn-outline-light btn-sm d-flex align-items-center" do %>
+            <i class="fa-solid fa-chart-line me-2"></i> Dashboard
+          <% end %>
+        </li>
 
-            </li>
-        
-          </ul>
-        
-        </nav>
+        <!-- Emitir Nota -->
+        <li class="nav-item me-2">
+          <% if current_user.certificate_installed? %>
+            <%= link_to new_notas_fiscai_path, class: "btn btn-outline-light btn-sm d-flex align-items-center" do %>
+              <i class="fa-solid fa-file-circle-plus me-2"></i> Emitir Nota
+            <% end %>
+          <% else %>
+            <button class="btn btn-outline-light btn-sm disabled d-flex align-items-center">
+              <i class="fa-solid fa-file-circle-plus me-2"></i> Emitir Nota
+            </button>
+          <% end %>
+        </li>
+
+        <!-- Notas Emitidas -->
+        <li class="nav-item me-2">
+          <% if current_user.certificate_installed? %>
+            <%= link_to notas_fiscais_path, class: "btn btn-outline-light btn-sm d-flex align-items-center" do %>
+              <i class="fa-solid fa-folder-open me-2"></i> Notas Emitidas
+            <% end %>
+          <% else %>
+            <button class="btn btn-outline-light btn-sm disabled d-flex align-items-center">
+              <i class="fa-solid fa-folder-open me-2"></i> Notas Emitidas
+            </button>
+          <% end %>
+        </li>
+
+        <!-- Certificado -->
+        <li class="nav-item me-2">
+          <%= link_to new_certificate_path, class: "btn btn-outline-light btn-sm d-flex align-items-center" do %>
+            <i class="fa-solid fa-shield-halved me-2"></i> Certificado
+          <% end %>
+        </li>
+
+        <!-- Perfil -->
+        <li class="nav-item me-2">
+          <%= link_to edit_user_registration_path, class: "btn btn-outline-light btn-sm d-flex align-items-center" do %>
+            <i class="fa-solid fa-user me-2"></i> Perfil
+          <% end %>
+        </li>
+
+        <!-- Sair -->
+        <li class="nav-item">
+          <%= button_to destroy_user_session_path,
+                method: :delete,
+                class: "btn btn-outline-danger btn-sm d-flex align-items-center",
+                form: { style: "display:inline;" } do %>
+            <i class="fa-solid fa-right-from-bracket me-2"></i> Sair
+          <% end %>
+        </li>
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
+
+
         
         
 
@@ -201,7 +150,6 @@ crossorigin="anonymous"></script>
 
           <%= yield %>
         </main>
-      </div>
     <% else %>
       <div class="container mt-5">
         <%= yield %>
