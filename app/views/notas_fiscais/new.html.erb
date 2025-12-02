@@ -17,9 +17,8 @@
       </div>
 
       <%= hidden_field_tag "nota[ide][tpAmb]", params.dig(:nota, :ide, :tpAmb), id: "nota_ide_tpAmb" %>
-      <%= hidden_field_tag "nota[ide][cGta]", params.dig(:nota, :ide, :cGta), id: "nota_ide_cGta" %>
-      <%= hidden_field_tag "nota[ide][hashCSSI]", params.dig(:nota, :ide, :hashCSSI), id: "nota_ide_hashCSSI" %>
       <%= hidden_field_tag "nota[ide][CPFUsuario]", params.dig(:nota, :ide, :CPFUsuario), id: "nota_ide_CPFUsuario" %>
+      <%= hidden_field_tag "nota[ide][CNPJEmitente]", params.dig(:nota, :ide, :CNPJEmitente), id: "nota_ide_CNPJEmitente" %>
     </div>
   </div>
 
@@ -471,9 +470,8 @@
   const notaDefault = {
     ide: {
       tpAmb: "2",
-      cGta: "7",
-      hashCSSI: "9L71n8OuHzIenL0ioTIcVxmnd9I=",
-      CPFUsuario: "04248685205"
+      CPFUsuario: "04248685205",
+      CNPJEmitente: ""
     },
     emit: {
       CPF: "99888971204",
