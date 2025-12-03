@@ -1,4 +1,5 @@
 
+
 <%= form_with model: @nota_fiscal, url: notas_fiscais_path, local: true do |f| %>
   <div class="card shadow-sm border-0 mb-4">
     <div class="card-body">
@@ -15,165 +16,78 @@
       <div class="alert alert-info bg-info-subtle border-0 text-dark small">
         Ambiente de HOMOLOGACAO
       </div>
-
-      <%= hidden_field_tag "nota[ide][tpAmb]", params.dig(:nota, :ide, :tpAmb), id: "nota_ide_tpAmb" %>
+      
+ <!-- ===== HIDDEN: EMITENTE VINDO DO USER ===== -->
+ <%= hidden_field_tag "nota[ide][tpAmb]", params.dig(:nota, :ide, :tpAmb), id: "nota_ide_tpAmb" %>
       <%= hidden_field_tag "nota[ide][CPFUsuario]", params.dig(:nota, :ide, :CPFUsuario), id: "nota_ide_CPFUsuario" %>
       <%= hidden_field_tag "nota[ide][CNPJEmitente]", params.dig(:nota, :ide, :CNPJEmitente), id: "nota_ide_CNPJEmitente" %>
+<%= hidden_field_tag "nota[emit][CPF]", current_user.cnpj %>
+<%= hidden_field_tag "nota[emit][xNome]", current_user.razao_social %>
+<%= hidden_field_tag "nota[emit][xFant]", current_user.nome_fantasia %>
+<%= hidden_field_tag "nota[emit][fone]", current_user.telefone %>
+<%= hidden_field_tag "nota[emit][IE]", current_user.inscricao_estadual %>
+
+<!-- ENDEREÇO DO EMITENTE (USER) -->
+<%= hidden_field_tag "nota[emit][xLgr]", current_user.rua %>
+<%= hidden_field_tag "nota[emit][nro]", current_user.numero %>
+<%= hidden_field_tag "nota[emit][xCpl]", current_user.complemento %>
+<%= hidden_field_tag "nota[emit][xBairro]", current_user.bairro %>
+  <%= hidden_field_tag "nota[emit][cMun]", @cidades_ibge[current_user.municipio] %>
+<%= hidden_field_tag "nota[emit][CEP]", current_user.cep %>
+
     </div>
   </div>
 
-  <ul class="nav nav-pills nav-fill step-tabs" id="notaFiscalTabs" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link active" id="tab-emit-tab" data-bs-toggle="tab" data-bs-target="#tab-emit" type="button" role="tab">
-        <span class="step-index">1</span>
-        <span class="step-text">
-          <strong>Emitente</strong>
-          <small>Cadastro e endereço</small>
-        </span>
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab-dest-tab" data-bs-toggle="tab" data-bs-target="#tab-dest" type="button" role="tab">
-        <span class="step-index">2</span>
-        <span class="step-text">
-          <strong>Destinatário</strong>
-          <small>Documentos e contato</small>
-        </span>
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab-prods-tab" data-bs-toggle="tab" data-bs-target="#tab-prods" type="button" role="tab">
-        <span class="step-index">3</span>
-        <span class="step-text">
-          <strong>Produtos</strong>
-          <small>Itens e tributos</small>
-        </span>
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab-transp-tab" data-bs-toggle="tab" data-bs-target="#tab-transp" type="button" role="tab">
-        <span class="step-index">4</span>
-        <span class="step-text">
-          <strong>Transporte</strong>
-          <small>Frete e volumes</small>
-        </span>
-      </button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link" id="tab-pag-tab" data-bs-toggle="tab" data-bs-target="#tab-pag" type="button" role="tab">
-        <span class="step-index">5</span>
-        <span class="step-text">
-          <strong>Pagamento</strong>
-          <small>Forma e Observação</small>
-        </span>
-      </button>
-    </li>
-  </ul>
+<ul class="nav nav-pills nav-fill step-tabs" id="notaFiscalTabs" role="tablist">
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="tab-dest-tab" data-bs-toggle="tab" data-bs-target="#tab-dest" type="button" role="tab">
+      <span class="step-index">1</span>
+      <span class="step-text">
+        <strong>Destinatário</strong>
+        <small>Documentos e contato</small>
+      </span>
+    </button>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-prods-tab" data-bs-toggle="tab" data-bs-target="#tab-prods" type="button" role="tab">
+      <span class="step-index">2</span>
+      <span class="step-text">
+        <strong>Produtos</strong>
+        <small>Itens e tributos</small>
+      </span>
+    </button>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-transp-tab" data-bs-toggle="tab" data-bs-target="#tab-transp" type="button" role="tab">
+      <span class="step-index">3</span>
+      <span class="step-text">
+        <strong>Transporte</strong>
+        <small>Frete e volumes</small>
+      </span>
+    </button>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="tab-pag-tab" data-bs-toggle="tab" data-bs-target="#tab-pag" type="button" role="tab">
+      <span class="step-index">4</span>
+      <span class="step-text">
+        <strong>Pagamento</strong>
+        <small>Forma e Observação</small>
+      </span>
+    </button>
+  </li>
+
+</ul>
+
 
   <div class="tab-content border border-top-0 p-4 bg-white rounded-bottom shadow-sm" id="notaFiscalTabsContent">
 
-    <div class="tab-pane fade show active" id="tab-emit" role="tabpanel" aria-labelledby="tab-emit-tab">
-    <!-- ======================= -->
-<!-- DADOS PESSOAIS / EMITENTE -->
-<!-- ======================= -->
-<div class="card mb-4">
-  <div class="card-header fw-bold">Dados do Emitente</div>
-  <div class="card-body">
-    <div class="row g-3">
-      
-      <div class="col-md-3">
-        <%= label_tag "nota_emit_CPF", "CPF", class: "form-label" %>
-        <%= text_field_tag "nota[emit][CPF]", nil,
-              class: "form-control",
-              data: { controller: "mask", mask: "cpf" } %>
-      </div>
-
-      <div class="col-md-5">
-        <%= label_tag "nota_emit_xNome", "Razão Social (xNome)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][xNome]", nil, class: "form-control" %>
-      </div>
-
-      <div class="col-md-4">
-        <%= label_tag "nota_emit_xFant", "Nome Fantasia (xFant)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][xFant]", nil, class: "form-control" %>
-      </div>
-
-      <div class="col-md-3">
-        <%= label_tag "nota_emit_fone", "Telefone", class: "form-label" %>
-        <%= text_field_tag "nota[emit][fone]", nil,
-              class: "form-control",
-              data: { controller: "mask", mask: "phone" } %>
-      </div>
-
-      <div class="col-md-3">
-        <%= label_tag "nota_emit_IE", "Inscrição Estadual (IE)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][IE]", nil, class: "form-control" %>
-      </div>
-
-    </div>
-  </div>
-</div>
 
 
-<!-- ======================= -->
-<!-- ENDEREÇO DO EMITENTE -->
-<!-- ======================= -->
-<div class="card mb-4">
-  <div class="card-header fw-bold">Endereço</div>
-  <div class="card-body">
-    <div class="row g-3">
-
-      <div class="col-md-5">
-        <%= label_tag "nota_emit_xLgr", "Rua (xLgr)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][xLgr]", nil, class: "form-control" %>
-      </div>
-
-      <div class="col-md-2">
-        <%= label_tag "nota_emit_nro", "Número (nro)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][nro]", nil, class: "form-control" %>
-      </div>
-
-      <div class="col-md-5">
-        <%= label_tag "nota_emit_xCpl", "Complemento (xCpl)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][xCpl]", nil, class: "form-control" %>
-      </div>
-
-      <div class="col-md-4">
-        <%= label_tag "nota_emit_xBairro", "Bairro (xBairro)", class: "form-label" %>
-        <%= text_field_tag "nota[emit][xBairro]", nil, class: "form-control" %>
-      </div>
-
-     <div class="col-md-2">
-  <%= label_tag "nota_emit_cMun", "Município (cMun)", class: "form-label" %>
-  <%= select_tag "nota[emit][cMun]",
-        options_for_select([
-          ["Porto Velho - RO", "1100205"],
-          ["Ji-Paraná - RO", "1100122"],
-          ["Ariquemes - RO", "1100024"],
-          ["Candeias do Jamari - RO", "1100800"],
-          ["Vilhena - RO", "1100304"],
-          ["Guajará-Mirim - RO", "1100106"],
-          ["Cacoal - RO", "1100040"],
-          ["Jaru - RO", "1100114"],
-          ["Machadinho d’Oeste - RO", "1100098"],
-          ["Pimenta Bueno - RO", "1100189"],
-        ]),
-        class: "form-select" %>
-</div>
-
-
-      <div class="col-md-2">
-        <%= label_tag "nota_emit_CEP", "CEP", class: "form-label" %>
-        <%= text_field_tag "nota[emit][CEP]", nil, class: "form-control" %>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-    </div>
-
-    <div class="tab-pane fade" id="tab-dest" role="tabpanel" aria-labelledby="tab-dest-tab">
+    <div class="tab-pane fade  show active" id="tab-dest" role="tabpanel" aria-labelledby="tab-dest-tab">
       <div class="card mb-4">
   <div class="card-header fw-bold">Dados do Destinatário</div>
 

@@ -134,6 +134,20 @@ end
 
   def new
     @nota_fiscal = NotaFiscal.new
+
+ @cidades_ibge = {
+      "Porto Velho - RO" => "1100205",
+      "Ji-Paraná - RO" => "1100122",
+      "Ariquemes - RO" => "1100024",
+      "Candeias do Jamari - RO" => "1100800",
+      "Vilhena - RO" => "1100304",
+      "Guajará-Mirim - RO" => "1100106",
+      "Cacoal - RO" => "1100040",
+      "Jaru - RO" => "1100114",
+      "Machadinho d’Oeste - RO" => "1100098",
+      "Pimenta Bueno - RO" => "1100189"
+    }
+
   end
 
   def edit
