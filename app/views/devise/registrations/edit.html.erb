@@ -1,64 +1,133 @@
-<h2 class="mb-4 fw-bold">Editar Perfil</h2>
+<h2 class="text-center mb-4 fw-bold">Editar Perfil</h2>
 
-<div class="card shadow-sm">
-  <div class="card-body">
+<div class="d-flex justify-content-center align-items-center bg-light">
+  <div class="card shadow-lg p-2" style="width: 1020px; border-radius: 15px;">
+    <div class="card-body">
 
-    <%= form_for(resource, as: resource_name,
-                 url: user_registration_update_path,
-                 html: { method: :put }) do |f| %>
+      <%= form_for(resource, as: resource_name,
+                   url: user_registration_update_path,
+                   html: { method: :put }) do |f| %>
 
-      <% if resource.errors.any? %>
-        <div class="alert alert-danger">
-          <strong>Erros ao salvar:</strong>
-          <ul class="mb-0">
-            <% resource.errors.full_messages.each do |msg| %>
-              <li><%= msg %></li>
-            <% end %>
-          </ul>
+        <% if resource.errors.any? %>
+          <div class="alert alert-danger">
+            <strong>Erros ao salvar:</strong>
+            <ul class="mb-0">
+              <% resource.errors.full_messages.each do |msg| %>
+                <li><%= msg %></li>
+              <% end %>
+            </ul>
+          </div>
+        <% end %>
+
+        <!-- 2 colunas -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :razao_social, "Razão Social", class: "form-label fw-semibold" %>
+            <%= f.text_field :razao_social, class: "form-control" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :nome_fantasia, "Nome Fantasia", class: "form-label fw-semibold" %>
+            <%= f.text_field :nome_fantasia, class: "form-control" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :email, class: "form-label fw-semibold" %>
+            <%= f.email_field :email, class: "form-control" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :cpf, "CPF", class: "form-label fw-semibold" %>
+            <%= f.text_field :cpf, class: "form-control", placeholder: "000.000.000-00" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :cnpj, "CNPJ", class: "form-label fw-semibold" %>
+            <%= f.text_field :cnpj, class: "form-control", placeholder: "00.000.000/0000-00" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :telefone, "Telefone", class: "form-label fw-semibold" %>
+            <%= f.text_field :telefone, class: "form-control" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :inscricao_estadual, "Inscrição Estadual", class: "form-label fw-semibold" %>
+            <%= f.text_field :inscricao_estadual, class: "form-control" %>
+          </div>
         </div>
-      <% end %>
+        <hr class="my-4">
+<h5 class="fw-bold mb-3">Endereço</h5>
 
-      <div class="mb-3">
-        <%= f.label :email, class: "form-label fw-semibold" %>
-        <%= f.email_field :email, class: "form-control" %>
-      </div>
+<div class="row">
 
-      <div class="mb-3">
-        <%= f.label :cpf, "CPF", class: "form-label fw-semibold" %>
-        <%= f.text_field :cpf, class: "form-control", placeholder: "000.000.000-00" %>
-      </div>
+  <div class="col-md-6 mb-3">
+    <%= f.label :rua, "Rua", class: "form-label fw-semibold" %>
+    <%= f.text_field :rua, class: "form-control", placeholder: "Nome da rua" %>
+  </div>
 
-      <div class="mb-3">
-        <%= f.label :cnpj, "CNPJ", class: "form-label fw-semibold" %>
-        <%= f.text_field :cnpj, class: "form-control", placeholder: "00.000.000/0000-00" %>
-      </div>
+  <div class="col-md-6 mb-3">
+    <%= f.label :numero, "Número", class: "form-label fw-semibold" %>
+    <%= f.text_field :numero, class: "form-control", placeholder: "123" %>
+  </div>
 
-      <hr class="my-4">
+  <div class="col-md-6 mb-3">
+    <%= f.label :complemento, "Complemento", class: "form-label fw-semibold" %>
+    <%= f.text_field :complemento, class: "form-control", placeholder: "Apto, Bloco, Sala..." %>
+  </div>
 
-      <div class="mb-3">
-        <%= f.label :password, "Nova senha", class: "form-label fw-semibold" %>
-        <%= f.password_field :password, autocomplete: "new-password",
-                             class: "form-control",
-                             placeholder: "Deixe em branco para não alterar" %>
-      </div>
+  <div class="col-md-6 mb-3">
+    <%= f.label :bairro, "Bairro", class: "form-label fw-semibold" %>
+    <%= f.text_field :bairro, class: "form-control", placeholder: "Centro" %>
+  </div>
 
-      <div class="mb-3">
-        <%= f.label :password_confirmation, "Confirmar nova senha", class: "form-label fw-semibold" %>
-        <%= f.password_field :password_confirmation, autocomplete: "new-password",
-                             class: "form-control" %>
-      </div>
+  <div class="col-md-6 mb-3">
+    <%= f.label :municipio, "Município", class: "form-label fw-semibold" %>
+    <%= f.text_field :municipio, class: "form-control", placeholder: "Cidade" %>
+  </div>
 
-      <div class="mb-3">
-        <%= f.label :current_password, "Senha atual (obrigatória)", class: "form-label fw-semibold" %>
-        <%= f.password_field :current_password, autocomplete: "current-password",
-                             class: "form-control" %>
-      </div>
+  <div class="col-md-6 mb-3">
+    <%= f.label :cep, "CEP", class: "form-label fw-semibold" %>
+    <%= f.text_field :cep, class: "form-control", placeholder: "00000-000" %>
+  </div>
+
+</div>
+
+
+        <hr class="my-4">
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <%= f.label :password, "Nova senha", class: "form-label fw-semibold" %>
+            <%= f.password_field :password, autocomplete: "new-password",
+                                 class: "form-control",
+                                 placeholder: "Deixe em branco para não alterar" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :password_confirmation, "Confirmar nova senha", class: "form-label fw-semibold" %>
+            <%= f.password_field :password_confirmation, autocomplete: "new-password",
+                                 class: "form-control" %>
+          </div>
+
+          <div class="col-md-6 mb-3">
+            <%= f.label :current_password, "Senha atual (obrigatória)", class: "form-label fw-semibold" %>
+            <%= f.password_field :current_password, autocomplete: "current-password",
+                                 class: "form-control" %>
+          </div>
+        </div>
 
       <div class="mt-4">
-        <%= f.submit "Salvar alterações",
-                     class: "btn btn-outline-primary w-100 fw-semibold py-2" %>
-      </div>
+  <%= f.button :submit, class: "btn btn-outline-info w-100 fw-semibold py-2" do %>
+    <i class="fas fa-paper-plane me-2"></i>
+    Salvar alterações
+  <% end %>
+</div>
 
-    <% end %>
+
+      <% end %>
+
+    </div>
   </div>
 </div>
+<br>

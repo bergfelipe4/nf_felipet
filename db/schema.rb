@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2025_12_01_120110) do
+ActiveRecord::Schema[7.1].define(version: 2025_12_03_123431) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -68,6 +68,16 @@ ActiveRecord::Schema[7.1].define(version: 2025_12_01_120110) do
     t.boolean "certificate_installed", default: false, null: false
     t.string "cpf"
     t.string "cnpj"
+    t.string "razao_social"
+    t.string "nome_fantasia"
+    t.string "telefone"
+    t.string "inscricao_estadual"
+    t.string "rua"
+    t.string "numero"
+    t.string "complemento"
+    t.string "bairro"
+    t.string "municipio"
+    t.string "cep"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
