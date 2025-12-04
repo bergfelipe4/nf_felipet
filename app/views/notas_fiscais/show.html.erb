@@ -1,31 +1,471 @@
-<div class="mb-4">
-  <h1 class="h3 mb-1">Resultado da Emissão</h1>
-  <p class="text-muted mb-0">Visualize exatamente o que foi enviado e recebido.</p>
-</div>
 
-<div class="card shadow-sm mb-4">
-  <div class="card-body">
-    <h5 class="card-title">Resposta da API (consulta atual)</h5>
-    <pre class="bg-light p-3 rounded border"><%= JSON.pretty_generate(@resposta.as_json) %></pre>
-  </div>
-</div>
+<% cstat   = (@nota["CSTAT_AUTORIZAR"] || @nota["CSTAT_CONSULTA"]).to_i %>
+<% motivo  = @nota["XMOTIVO_AUTORIZAR"] || @nota["XMOTIVO_CONSULTA"] || "—" %>
+<% badge_class, icon, texto =
+  if cstat.between?(100, 199)
+    ["bg-success-subtle text-success-emphasis", "fa-check-circle", "Autorizada"]
+  elsif cstat.between?(200, 299)
+    ["bg-warning-subtle text-warning-emphasis", "fa-exclamation-circle", "Aviso"]
+  elsif cstat.between?(300, 399)
+    ["bg-danger-subtle text-danger-emphasis", "fa-times-circle", "Rejeitada"]
+  elsif cstat.between?(400, 499)
+    ["bg-secondary-subtle text-secondary-emphasis", "fa-ban", "Erro Genérico"]
+  elsif cstat.between?(500, 599)
+    ["bg-danger-subtle text-danger-emphasis", "fa-times-circle", "Rejeitada (Duplicidade/Validação)"]
+  else
+    ["bg-secondary-subtle text-secondary-emphasis", "fa-question-circle", "Desconhecido"]
+  end
+%>
 
-<% if @payload_enviado.present? %>
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <h5 class="card-title">Payload enviado (JSON enviado na emissão)</h5>
-      <pre class="bg-light p-3 rounded border"><%= JSON.pretty_generate(@payload_enviado.as_json) %></pre>
+<div class="card shadow-lg border-0 mb-3 overflow-hidden" style="background: linear-gradient(135deg, #0d1a55 0%, #0D1B2A 100%);">
+  <div class="card-body text-white">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-3">
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <i class="fa-solid fa-file-invoice text-white" style="font-size: 1.8rem;"></i>
+          <div>
+            <h2 class="h2 mb-0 fw-bold">Visualização da NF-e</h2>
+            <p class="mb-0 small" style="opacity: 0.9;">Emissão autorizada e armazenada</p>
+          </div>
+        </div>
+      </div>
+      <div class="text-md-end">
+       <span class="badge <%= badge_class %> px-3 py-2" style="font-size: 0.95rem;">
+  <i class="fa-solid <%= icon %>"></i>
+  <strong><%= cstat %></strong> — <%= motivo %>
+</span>
+
+      </div>
+    </div>
+
+    <div class="mt-4 pt-3 border-top border-white border-opacity-25">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <small style="opacity: 0.8;">Data de Emissão</small>
+          <p class="mb-0 fw-semibold"><%= @nota.dig('created_at') || 'data indisponível' %></p>
+        </div>
+        <div class="col-md-6">
+          <small style="opacity: 0.8;">Chave de Acesso</small>
+          <p class="mb-0 fw-semibold font-monospace"><%= params[:id] %></p>
+        </div>
+      </div>
     </div>
   </div>
-<% end %>
+</div>
+
+<div class="alert alert-warning bg-warning-subtle border-warning border-2 mb-2 shadow-sm" style="border-radius: 0.75rem;">
+  <div class="d-flex align-items-center gap-2">
+    <i class="fa-solid fa-flask-vial text-warning" style="font-size: 1.3rem;"></i>
+    <div>
+      <strong>Ambiente de HOMOLOGAÇÃO</strong>
+      <small class="d-block text-muted">Sem valor fiscal</small>
+    </div>
+  </div>
+</div>
+
+<ul class="nav nav-pills nav-fill step-tabs gap-2" id="notaFiscalTabs" role="tablist" style="background: transparent;">
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active fw-semibold d-flex flex-column align-items-center gap-2 py-3 px-3" id="tab-dest-tab" data-bs-toggle="tab" data-bs-target="#tab-dest" type="button" role="tab" style="border-radius: 0.75rem; transition: all 0.3s ease; background-color: #f8f9fa; border: 2px solid #0D1B2A;">
+      <span class="step-index d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; font-size: 0.9rem; font-weight: bold;">1</span>
+      <span class="step-text text-center small">
+        <strong style="display: block;">Destinatário</strong>
+        <small class="text-muted">Dados do cliente</small>
+      </span>
+    </button>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link fw-semibold d-flex flex-column align-items-center gap-2 py-3 px-3" id="tab-prods-tab" data-bs-toggle="tab" data-bs-target="#tab-prods" type="button" role="tab" style="border-radius: 0.75rem; transition: all 0.3s ease; background-color: transparent; border: 2px solid #0D1B2A;">
+      <span class="step-index d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; font-size: 0.9rem; font-weight: bold;">2</span>
+      <span class="step-text text-center small">
+        <strong style="display: block;">Produtos</strong>
+        <small class="text-muted">Itens e tributos</small>
+      </span>
+    </button>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link fw-semibold d-flex flex-column align-items-center gap-2 py-3 px-3" id="tab-transp-tab" data-bs-toggle="tab" data-bs-target="#tab-transp" type="button" role="tab" style="border-radius: 0.75rem; transition: all 0.3s ease; background-color: transparent; border: 2px solid #0D1B2A;">
+      <span class="step-index d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; font-size: 0.9rem; font-weight: bold;">3</span>
+      <span class="step-text text-center small">
+        <strong style="display: block;">Transporte</strong>
+        <small class="text-muted">Frete e volumes</small>
+      </span>
+    </button>
+  </li>
+
+  <li class="nav-item" role="presentation">
+    <button class="nav-link fw-semibold d-flex flex-column align-items-center gap-2 py-3 px-3" id="tab-pag-tab" data-bs-toggle="tab" data-bs-target="#tab-pag" type="button" role="tab" style="border-radius: 0.75rem; transition: all 0.3s ease; background-color: transparent; border: 2px solid #0D1B2A;">
+      <span class="step-index d-flex align-items-center justify-content-center" style="width: 32px; height: 32px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 50%; font-size: 0.9rem; font-weight: bold;">4</span>
+      <span class="step-text text-center small">
+        <strong style="display: block;">Pagamento</strong>
+        <small class="text-muted">Forma e observação</small>
+      </span>
+    </button>
+  </li>
+
+</ul>
+
+<style>
+  .nav-link.active {
+    background-color: #6ca2fa !important;
+    border: 2px solid #667eea !important;
+  }
+  
+  .nav-link:hover {
+    background-color: #5491ce !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.15);
+  }
+</style>
+
+<div class="tab-content border-0 p-0 bg-transparent rounded-bottom shadow-none" id="notaFiscalTabsContent">
+
+  <div class="tab-pane fade show active" id="tab-dest" role="tabpanel" aria-labelledby="tab-dest-tab">
+    <div class="card mb-4 shadow-lg border-0" style="border-radius: 0.75rem;">
+      <div class="card-header fw-bold py-3 px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 0.75rem 0.75rem 0 0;">
+        <i class="fa-solid fa-user-tie"></i> Dados do Destinatário
+      </div>
+
+      <div class="card-body p-4">
+        <!-- Dados principais -->
+        <div class="row g-3 mb-4">
+
+          <div class="col-md-3">
+            <%= label_tag "nota_dest_CNPJ", "CNPJ", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[dest][CNPJ]", @payload_enviado.dig("dest", "CNPJ") || @nota.dig("dest", "CNPJ"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+
+          <div class="col-md-5">
+            <%= label_tag "nota_dest_xNome", "Razão Social (xNome)", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[dest][xNome]", @payload_enviado.dig("dest", "xNome") || @nota.dig("dest", "xNome"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+
+          <div class="col-md-2">
+            <%= label_tag "nota_dest_fone", "Telefone", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[dest][fone]", @payload_enviado.dig("dest", "fone") || @nota.dig("dest", "fone"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+
+          <div class="col-md-1">
+            <%= label_tag "nota_dest_indIEDest", "indIEDest", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[dest][indIEDest]", @payload_enviado.dig("dest", "indIEDest") || @nota.dig("dest", "indIEDest"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+
+          <div class="col-md-1">
+            <%= label_tag "nota_dest_IE", "IE", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[dest][IE]", @payload_enviado.dig("dest", "IE") || @nota.dig("dest", "IE"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+
+        </div>
+
+        <!-- Endereço -->
+        <div class="card mt-3 shadow-sm" style="background: #f8f9fa; border: 2px dashed #dee2e6; border-radius: 0.75rem;">
+          <div class="card-header small fw-bold py-2 px-3" style="background: transparent; border: none;">
+            <i class="fa-solid fa-map-location-dot text-primary"></i> Endereço
+          </div>
+          <div class="card-body p-3">
+            <div class="row g-3">
+
+              <div class="col-md-5">
+                <%= label_tag "nota_dest_xLgr", "Logradouro (xLgr)", class: "form-label fw-semibold small text-muted" %>
+                <%= text_field_tag "nota[dest][xLgr]", @payload_enviado.dig("dest", "xLgr") || @nota.dig("dest", "xLgr"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+              </div>
+
+              <div class="col-md-2">
+                <%= label_tag "nota_dest_nro", "Número (nro)", class: "form-label fw-semibold small text-muted" %>
+                <%= text_field_tag "nota[dest][nro]", @payload_enviado.dig("dest", "nro") || @nota.dig("dest", "nro"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+              </div>
+
+              <div class="col-md-5">
+                <%= label_tag "nota_dest_xCpl", "Complemento (xCpl)", class: "form-label fw-semibold small text-muted" %>
+                <%= text_field_tag "nota[dest][xCpl]", @payload_enviado.dig("dest", "xCpl") || @nota.dig("dest", "xCpl"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+              </div>
+
+              <div class="col-md-4">
+                <%= label_tag "nota_dest_xBairro", "Bairro (xBairro)", class: "form-label fw-semibold small text-muted" %>
+                <%= text_field_tag "nota[dest][xBairro]", @payload_enviado.dig("dest", "xBairro") || @nota.dig("dest", "xBairro"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+              </div>
+
+              <div class="col-md-2">
+                <%= label_tag "nota_dest_cMun", "Município (cMun)", class: "form-label fw-semibold small text-muted" %>
+                <%= text_field_tag "nota[dest][cMun]", @payload_enviado.dig("dest", "cMun") || @nota.dig("dest", "cMun"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+              </div>
+
+              <div class="col-md-2">
+                <%= label_tag "nota_dest_CEP", "CEP", class: "form-label fw-semibold small text-muted" %>
+                <%= text_field_tag "nota[dest][CEP]", @payload_enviado.dig("dest", "CEP") || @nota.dig("dest", "CEP"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tab-pane fade" id="tab-prods" role="tabpanel" aria-labelledby="tab-prods-tab">
+    <div class="d-flex flex-column flex-lg-row align-items-lg-center justify-content-between gap-3 mb-4">
+      <div>
+        <h5 class="mb-1 fw-bold d-flex align-items-center gap-2">
+          <i class="fa-solid fa-box text-primary"></i>Itens da Nota Fiscal
+        </h5>
+        <p class="text-muted mb-0 small">Produtos e tributos da emissão.</p>
+      </div>
+    </div>
+
+    <div id="produtos-container" class="mb-3">
+      <% if @payload_enviado.present? && @payload_enviado["prods"].present? %>
+        <% @payload_enviado["prods"].each_with_index do |produto, idx| %>
+          <div class="produto-item card mb-4 shadow-lg border-0" style="border-radius: 0.75rem; border-left: 4px solid #667eea;">
+            <div class="card-body">
+              <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-3 mb-4 pb-3 border-bottom">
+                <div>
+                  <span class="badge bg-primary-subtle text-primary-emphasis text-uppercase small fw-bold px-3 py-2" style="border-radius: 0.5rem;">
+                    <i class="fa-solid fa-tag"></i> Item <%= idx + 1 %>
+                  </span>
+                  <h6 class="mb-0 mt-2 fw-bold" style="font-size: 1.1rem;"><%= produto["xProd"] %></h6>
+                </div>
+                <div class="text-md-end">
+                  <small class="text-muted d-block">Código</small>
+                  <span class="font-monospace fw-semibold text-primary"><%= produto["cProd"] %></span>
+                </div>
+              </div>
+
+              <div class="row g-4">
+                <div class="col-lg-9">
+                  <div class="row g-3">
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Descrição (xProd)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["xProd"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "NCM", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["NCM"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "CFOP", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["CFOP"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Un. comercial (uCom)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["uCom"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Qtd. comercial (qCom)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["qCom"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Valor unit. (vUnCom)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["vUnCom"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Un. tributável (uTrib)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["uTrib"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Qtd. trib. (qTrib)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["qTrib"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                  </div>
+
+                  <hr class="text-muted my-4" />
+
+                  <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+                    <i class="fa-solid fa-calculator text-warning"></i> Informações Fiscais
+                  </h6>
+                  <div class="row g-3">
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "CST", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["CST"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "Redução BC (pRedBC)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["pRedBC"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "ICMS (%) (pICMS)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["pICMS"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                    <div class="col-sm-6 col-lg-3">
+                      <%= label_tag nil, "ICMS UF Dest (%) (pICMSUFDest)", class: "form-label fw-semibold small text-muted" %>
+                      <%= text_field_tag nil, produto["pICMSUFDest"], class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="tab-transp" role="tabpanel" aria-labelledby="tab-transp-tab">
+    <div class="card shadow-lg border-0" style="border-radius: 0.75rem;">
+      <div class="card-header fw-bold py-3 px-4" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; border-radius: 0.75rem 0.75rem 0 0;">
+        <i class="fa-solid fa-truck"></i> Informações de Transporte
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_modFrete", "Modalidade frete (modFrete)", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][modFrete]", @payload_enviado.dig("transp", "modFrete") || @nota.dig("transp", "modFrete"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="fa-solid fa-person-hiking text-success"></i> Transportadora
+        </h6>
+        <div class="row g-3 mb-4 p-3 bg-light rounded" style="border-left: 4px solid #28a745; border-radius: 0.5rem;">
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_transporta_CPF", "CPF", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][transporta][CPF]", @payload_enviado.dig("transp", "transporta", "CPF") || @nota.dig("transp", "transporta", "CPF"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_transporta_xNome", "Nome", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][transporta][xNome]", @payload_enviado.dig("transp", "transporta", "xNome") || @nota.dig("transp", "transporta", "xNome"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_transporta_IE", "IE", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][transporta][IE]", @payload_enviado.dig("transp", "transporta", "IE") || @nota.dig("transp", "transporta", "IE"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_transporta_xEnder", "Endereço", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][transporta][xEnder]", @payload_enviado.dig("transp", "transporta", "xEnder") || @nota.dig("transp", "transporta", "xEnder"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_transporta_xMun", "Município", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][transporta][xMun]", @payload_enviado.dig("transp", "transporta", "xMun") || @nota.dig("transp", "transporta", "xMun"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-2">
+            <%= label_tag "nota_transp_transporta_UF", "UF", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][transporta][UF]", @payload_enviado.dig("transp", "transporta", "UF") || @nota.dig("transp", "transporta", "UF"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="fa-solid fa-car text-info"></i> Veículo
+        </h6>
+        <div class="row g-3 mb-4 p-3 bg-light rounded" style="border-left: 4px solid #17a2b8; border-radius: 0.5rem;">
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_veicTransp_placa", "Placa", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][veicTransp][placa]", @payload_enviado.dig("transp", "veicTransp", "placa") || @nota.dig("transp", "veicTransp", "placa"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-2">
+            <%= label_tag "nota_transp_veicTransp_UF", "UF", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][veicTransp][UF]", @payload_enviado.dig("transp", "veicTransp", "UF") || @nota.dig("transp", "veicTransp", "UF"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_veicTransp_RNTC", "RNTC", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][veicTransp][RNTC]", @payload_enviado.dig("transp", "veicTransp", "RNTC") || @nota.dig("transp", "veicTransp", "RNTC"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+        </div>
+
+        <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="fa-solid fa-boxes text-warning"></i> Volume
+        </h6>
+        <div class="row g-3 p-3 bg-light rounded" style="border-left: 4px solid #ffc107; border-radius: 0.5rem;">
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_vol_qVol", "Quantidade (qVol)", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][vol][qVol]", @payload_enviado.dig("transp", "vol", "qVol") || @nota.dig("transp", "vol", "qVol"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_vol_esp", "Espécie (esp)", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][vol][esp]", @payload_enviado.dig("transp", "vol", "esp") || @nota.dig("transp", "vol", "esp"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_vol_marca", "Marca", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][vol][marca]", @payload_enviado.dig("transp", "vol", "marca") || @nota.dig("transp", "vol", "marca"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+          <div class="col-md-3">
+            <%= label_tag "nota_transp_vol_nVol", "Número do volume (nVol)", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[transp][vol][nVol]", @payload_enviado.dig("transp", "vol", "nVol") || @nota.dig("transp", "vol", "nVol"), class: "form-control", disabled: true, style: "background-color: white; border-radius: 0.5rem;" %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="tab-pag" role="tabpanel" aria-labelledby="tab-pag-tab">
+    <div class="card shadow-lg border-0" style="border-radius: 0.75rem;">
+      <div class="card-header fw-bold py-3 px-4" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; border-radius: 0.75rem 0.75rem 0 0;">
+        <i class="fa-solid fa-credit-card"></i> Informações de Pagamento
+      </div>
+      <div class="card-body p-4">
+        <div class="row g-3 mb-4">
+          <div class="col-md-3">
+            <%= label_tag "nota_pag_tPag", "Forma de pagamento (tPag)", class: "form-label fw-semibold small text-muted" %>
+            <%= text_field_tag "nota[pag][tPag]", @payload_enviado.dig("pag", "tPag") || @nota.dig("pag", "tPag"), class: "form-control", disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+          </div>
+        </div>
+
+        <hr class="my-4" />
+
+        <h6 class="fw-bold mb-3 d-flex align-items-center gap-2">
+          <i class="fa-solid fa-note-sticky text-secondary"></i> Informações Complementares
+        </h6>
+        <%= text_area_tag "nota[infAdic][infCpl]", @payload_enviado.dig("infAdic", "infCpl") || @nota.dig("infAdic", "infCpl"), class: "form-control", rows: 5, disabled: true, style: "background-color: #f8f9fa; border-radius: 0.5rem;" %>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="my-5">
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5">
+  <div class="text-muted small d-flex align-items-center gap-2">
+    <i class="fa-solid fa-circle-info text-info"></i>
+    O XML assinado permanece em Base64 e não é persistido. Toda a responsabilidade de armazenamento fica na API externa.
+  </div>
+  <div class="d-flex gap-2">
+    <%= link_to "Voltar à lista", notas_fiscais_path, class: "btn btn-outline-secondary" %>
+    <%= link_to "Emitir outra nota", new_notas_fiscai_path, class: "btn btn-outline-primary" %>
+  </div>
+</div>
 
 <% if @xml_assinado.present? %>
-  <div class="card shadow-sm mb-4">
-    <div class="card-body">
-      <h5 class="card-title">XML Assinado Retornado</h5>
-      <pre class="bg-light p-3 rounded border"><%= @xml_assinado %></pre>
+  <div class="card shadow-lg border-0 mb-4" style="border-radius: 0.75rem;">
+    <div class="card-header fw-bold py-3 px-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-radius: 0.75rem 0.75rem 0 0;">
+      <i class="fa-solid fa-code"></i> XML Assinado Retornado
+    </div>
+    <div class="card-body p-4">
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+        <button class="btn btn-sm btn-outline-primary" onclick="copyToClipboard('xmlContent')">
+          <i class="fa-solid fa-copy"></i> Copiar XML
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" onclick="downloadXML()">
+          <i class="fa-solid fa-download"></i> Download XML
+        </button>
+      </div>
+      <pre class="bg-dark text-light p-4 rounded border-0" id="xmlContent" style="border-radius: 0.5rem; max-height: 500px; overflow-y: auto;"><%= @xml_assinado %></pre>
     </div>
   </div>
 <% end %>
 
-<%= link_to "Emitir outra nota", new_notas_fiscai_path, class: "btn btn-primary" %>
+<script>
+  function copyToClipboard(elementId) {
+    const element = document.getElementById(elementId);
+    const text = element.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      alert('✓ XML copiado para a área de transferência!');
+    }).catch(() => {
+      alert('✗ Erro ao copiar o texto.');
+    });
+  }
+
+  function downloadXML() {
+    const element = document.getElementById('xmlContent');
+    const text = element.innerText;
+    const blob = new Blob([text], { type: 'application/xml' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'nota-fiscal-<%= params[:id] %>.xml';
+    a.click();
+    window.URL.revokeObjectURL(url);
+  }
+</script>

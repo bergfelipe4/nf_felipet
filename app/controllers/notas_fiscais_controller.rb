@@ -85,35 +85,50 @@ end
 
 def show
   chave = params[:id].to_s
-  cpf   = params[:cpf]
+  cpf   = current_user.cpf
 
-  # Consulta na API novamente, como antes
-  resposta_api = ApiCliente.consultar_notas(cpf)
+  @consulta_error  = nil
+  @consulta_result = nil
+  @notas_consulta  = []
+  @nota            = nil
 
-  unless resposta_api[:success]
+  # -----------------------
+  # Consulta API igual ao index
+  # -----------------------
+  resposta = ApiCliente.consultar_notas(cpf)
+
+  unless resposta[:success]
     redirect_to notas_fiscais_path, alert: "Não foi possível consultar as notas."
     return
   end
 
-  consulta_result = resposta_api[:body] || {}
-  notas = Array(consulta_result["notas"])
+  @consulta_result = resposta[:body] || {}
+  raw_notas        = Array(@consulta_result["notas"])
 
-  # Encontra a nota solicitada pela CHAVE
-  @nota = notas.find { |n| n["CHAVE"].to_s == chave }
+  # Normaliza igual ao index
+  @notas_consulta = raw_notas.map { |h| h.transform_keys(&:to_s) }
+
+  # -----------------------
+  # Encontra a nota específica pela CHAVE
+  # -----------------------
+  @nota = @notas_consulta.find { |n| n["CHAVE"].to_s == chave }
 
   unless @nota
     redirect_to notas_fiscais_path, alert: "Nota não encontrada para a chave #{chave}."
     return
   end
 
-  # Busca o log no banco para mostrar o payload enviado
+  # -----------------------
+  # Pega o log do banco (como já fazia)
+  # -----------------------
   @log = current_user.emission_logs.find_by(chave: chave)
 
-  # Caso não exista o log, evita erro
   @payload_enviado = @log&.nota_payload
   @resposta_log    = @log&.resposta_payload
 
-  # XML retornado pela consulta
+  # -----------------------
+  # XML assinado (como antes)
+  # -----------------------
   xml_base64 = @nota["XML"] || @nota["xml"] || @nota["xml_assinado"]
 
   if xml_base64.present?
@@ -126,7 +141,9 @@ def show
     @xml_assinado = nil
   end
 
-  # A resposta exibida será a nota encontrada na API
+  # -----------------------
+  # Mantém variável @resposta igual ao index
+  # -----------------------
   @resposta = @nota
 end
 
